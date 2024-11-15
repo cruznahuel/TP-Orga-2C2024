@@ -9,9 +9,11 @@ extern fread
 
 extern fputs
 extern fopen
+extern fgetc
 extern fclose
 extern strcpy
 extern strcmp
+extern toupper
 
 %macro Puts 1
     mov rdi, %1
@@ -25,7 +27,7 @@ extern strcmp
     call gets
     add rsp, 8
 %endmacro
-%macro inputNumero 2
+%macro Scanf 2
     mov rdi, %1
     mov rsi, %2
     sub rsp, 8
@@ -48,17 +50,17 @@ section .data
     mensajeErrorLectura                 db      "Hubo un error al leer: %s",10,0
     modoLectura                         db      "r",0
     mensajeCargarPartida                db      "Hay una partida guardada, ¿quiere reanudarla? S/N",10,0
-    respuestaPositiva                   db      "S",0
-    respuestaNegativa                   db      "N",0
+    respuestaPositiva                   db      'S'
+    respuestaNegativa                   db      'N'
     mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
-
+    formatoChar                         db      "%c",0    
 
 
 
     ;Para la impresion del tablero
     e                                   db      "   ",0
-    formatoIndice                       db      " %i ",0
-    formatoChar                         db      " %c ",0
+    formatoIndiceInt                    db      " %i ",0
+    formatoIndiceChar                   db      " %c ",0
     nuevaLinea                          db      "",0
 
 
@@ -68,7 +70,7 @@ section .bss
     fileHandle                          resq    1
     archivoALeer                        resb    30
     inputStr                            resb    30
-
+    inputChar                           resb    1
 
 
 
@@ -78,20 +80,15 @@ section .text
 main:
     Puts mensajeInicial
     
-    Strcpy archivoALeer, archivoTablero
-    
     sub rsp, 8
     call verificarTableroGuardado
     add rsp, 8
 
     sub rsp, 8
-    call leerTablero
+    call leerTablero        ;devuelve 0 si se pudo leer el archivo
     add rsp, 8
-    
-    Puts prueba
-    
     cmp rax, 0
-    je finPrograma
+    jne finPrograma
 
     
     sub rsp, 8
@@ -107,18 +104,26 @@ main:
     ret
 
 
-verificarTableroGuardado:
+verificarTableroGuardado:                   ;devuelve el string archivoALeer con el valor "tablero.txt" o "tableroGuardado.txt"
+    Strcpy archivoALeer, archivoTablero
+
     mov rdi, archivoTableroGuardado
     mov rsi, modoLectura
     sub rsp, 8
     call fopen
     add rsp,8
-
     cmp rax, 0
     jle finVerificarTableroGuardado
 
     mov qword[fileHandle], rax
-    
+
+    mov rdi, qword[fileHandle]
+    sub rsp, 8
+    call fgetc
+    add rsp, 8
+    cmp rax, 0
+    jl finVerificarTableroGuardado          ;significa que hay archivo pero esta vacio ya que fgetc devuelve -1
+
     mov rdi, qword[fileHandle]
     sub rsp, 8
     call fclose
@@ -127,24 +132,24 @@ verificarTableroGuardado:
     Puts mensajeCargarPartida
 
     pedirCargarPartida:
-    Gets inputStr
-    ; podriamos ver que si ingresan s o n (minusculas) sea valido tambien. Habria que usar la funcion toupper()
-    mov rdi, inputStr
-    mov rsi, respuestaNegativa
-    sub rsp, 8
-    call strcmp
-    add rsp, 8
-
+    Scanf formatoChar, inputChar
     cmp rax, 0
-    jmp finVerificarTableroGuardado
+    jle inputInvalido
+
+    mov rdi, byte[inputChar]
+    sub rsp, 8
+    call toupper
+    add rsp, 8
+    mov byte[inputChar], al
     
-    mov rdi, inputStr
-    mov rsi, respuestaPositiva
-    sub rsp, 8
-    call strcmp
-    add rsp, 8
-
-    cmp rax, 0
+    mov al, byte[inputChar]
+    mov bl, byte[respuestaNegativa]
+    cmp al, bl
+    je finVerificarTableroGuardado
+    
+    mov al, byte[inputChar]
+    mov bl, byte[respuestaPositiva]
+    cmp al, bl
     jne inputInvalido
 
     Strcpy archivoALeer, archivoTableroGuardado
@@ -172,8 +177,11 @@ leerTablero:
     mov rsi, 49
     mov rdx, qword[fileHandle]
     sub rsp, 8
+    Puts prueba
     call fgets
     add rsp, 8
+
+    mov rax, 0
     jmp finLeerTablero
 
     errorLecturaArchivo:
@@ -181,13 +189,13 @@ leerTablero:
     mov rsi, archivoALeer
     sub rsp, 8
     call printf
-    add rsp, 8 
+    add rsp, 8
     
-    mov rax, 0
+    mov rax, 1
 
     finLeerTablero:
-    mov rax, 1
     ret
+    
 
 imprimirTablero:
     Puts nuevaLinea
@@ -196,7 +204,7 @@ imprimirTablero:
     mov rax, 0
     imprimirPrimeraLinea:
     
-    mov rdi, formatoIndice
+    mov rdi, formatoIndiceInt  
     mov rsi, rax
     sub rsp, 8
     call printf
@@ -212,14 +220,14 @@ imprimirTablero:
     mov rbx, 0
     imprimirFila:
     
-    mov rdi, formatoIndice
+    mov rdi, formatoIndiceInt  
     mov rsi, rax
     sub rsp, 8
     call printf
     add rsp, 8
 
     imprimirCaracterTablero:
-    mov rdi, formatoChar 
+    mov rdi, formatoIndiceChar
     xor rsi, rsi
     mov sil, byte[tablero+rbx]
     sub rsp, 8
