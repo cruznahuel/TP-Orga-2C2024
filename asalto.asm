@@ -148,7 +148,10 @@ main:
     jmp soldadoValido
 
     movimientoSoldadoValido:
+    ; Imprimir mensaje de movimiento válido
     Puts mensajeMovimientoValido
+
+    ret
 
     ; ...
 
@@ -413,9 +416,6 @@ validarLugarLibre:
     ret    
 
 
-
-
-
 validarMovimientoSoldado:
     movzx rax, byte[filaDestino]
     movzx rbx, byte[filaOrigen]
@@ -442,8 +442,6 @@ validarMovimientoSoldado:
     movimientoValido:
     mov rax, 1
     ret
-
-
 
 
 
