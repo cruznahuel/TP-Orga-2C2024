@@ -27,19 +27,37 @@ section .data
     prueba                              db      "prueba",0
 
     ; Seccion movimientos
-    mensajeIngFilCol                    db      "Ingrese fila (1 a 7) y columna (1 a 7) separados por un espacio: ", 0
-    mensajeErrorInput                   db      "Los datos ingresados son inválidos, intente nuevamente."
-    mensajeInputCorrecto                db      "Los datos son correctos"
+    mensajeIngFilColOrigen              db      "Ingrese fila (0 a 6) y columna (0 a 6) que desea mover separados por un espacio: ", 0
+    mensajeErrorInput                   db      "Los datos ingresados son inválidos, intente nuevamente.", 0
+    mensajeInputCorrecto                db      "Los datos son correctos", 0
+    mensajeSoldadoValido                db      "La posición indicada tiene efectivamente un soldado", 0
+    mensajeErrorSoldado                 db      "No hay un soldado presente en esta posición", 0
+    mensajeIngFilColDestino             db      "Ingrese fila (0 a 6) y columna (0 a 6) a la que desea mover separados por un espacio: ", 0
+    
+    soldado                             db      'X' ; Defino variable soldado con valor 'X'
+    oficial                             db      'O' ; Defino variable oficial con valor 'O'
+    lugarLibre                          db      '_' ; Defino variable lugarLibre con valor '_'
+
+    mensajeErrorLugarLibre              db      "La posición seleccionada no está libre, por favor ingrese nuevamente", 0
+    mensajeLugarLibreValido             db      "La posición seleccionada está efectivamente libre", 0
+    mensajeErrorMovimiento              db      "El movimiento planteado no es valido", 0
+    mensajeMovimientoValido             db      "El movimiento planteado es correcto", 0
+
+
+
 
 section .bss
     fileHandle                          resq    1
     archivoALeer                        resb    30
     inputStr                            resb    30
     inputChar                           resb    1
-    inputFilCol                         resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
-    fila                                resw    1
-    columna                             resw    1
+    inputFilColOrigen                   resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
+    filaOrigen                          resw    1
+    columnaOrigen                       resw    1
     inputValido                         resb    1 ; 'S' valido 'N' invalido
+    inputFilColDestino                  resb    50
+    filaDestino                         resw    1
+    columnaDestino                      resw    1
 
 
 
@@ -62,12 +80,14 @@ main:
     call imprimirTablero
     add rsp, 8
 
-    Puts mensajeIngFilCol
-    Gets inputFilCol
+    Puts mensajeIngFilColOrigen
+    Gets inputFilColOrigen
 
+    lea rdi, [inputFilColOrigen]                  
     sub rsp, 8
-    call validarFilCol
+    call validarFilColOrigen
     add rsp, 8
+
 
     cmp byte[inputValido], 'S'
     je continuar
@@ -77,8 +97,59 @@ main:
     jmp main
 
     continuar:
+    xor rax, rax  ; Limpia el valor previo en rax
+    sub rsp, 8
+    mov rsi, filaOrigen
+    mov rdx, columnaOrigen
+    ;mov dl, 'X' ; Valido que el lugar seleccionado contenga un soldado
+    call validarLugarSoldado
+    add rsp, 8
 
-    Puts mensajeInputCorrecto
+    cmp rax, 1
+    je soldadoValido       ; Si hay un soldado, saltamos a soldadoValido.
+
+    Puts mensajeErrorSoldado
+    jmp main               ; Si no hay soldado, volvemos al inicio.
+
+    soldadoValido:
+    Puts mensajeSoldadoValido
+
+    Puts mensajeIngFilColDestino
+    Gets inputFilColDestino
+
+    lea rdi, [inputFilColDestino]
+    sub rsp, 8
+    call validarFilColDestino
+    add rsp, 8
+
+    sub rsp, 8
+    mov rsi, filaDestino
+    mov rdx, columnaDestino
+    ;mov dl, [lugarLibre] ; Valido que el lugar seleccionado esté libre
+    call validarLugarLibre
+    add rsp, 8
+
+    cmp rax, 1
+    je lugarLibreValido       ; Si el lugar está libre salto a lugarLibreValido
+
+    Puts mensajeErrorLugarLibre
+    jmp soldadoValido               
+
+    lugarLibreValido:
+    Puts mensajeLugarLibreValido
+    sub rsp, 8
+    call validarMovimientoSoldado
+    add rsp, 8
+
+    cmp rax, 1
+    je movimientoSoldadoValido
+
+    Puts mensajeErrorMovimiento
+    jmp soldadoValido
+
+    movimientoSoldadoValido:
+    Puts mensajeMovimientoValido
+
     ; ...
 
     finPrograma:
@@ -243,31 +314,137 @@ imprimirTablero:
 
 
 
-validarFilCol: 
-    mov byte[inputValido], 'N'
+validarFilColOrigen:
+    mov byte[inputValido], 'N'      ; Inicializar inputValido como 'N' (no válido)
 
-    mov rdi, inputFilCol
-    mov rsi, formatoInputFilCol
-    mov rdx, fila
-    mov rcx, columna
+    mov rdi, rdi                  ; rdi contendrá la dirección de inputFilCol
+    mov rsi, formatoInputFilCol    
+    mov rdx, filaOrigen            
+    mov rcx, columnaOrigen         
     sub rsp, 8
-    call sscanf
+    call sscanf                    
     add rsp, 8
 
-    cmp rax, 2
-    jl invalido
+    cmp rax, 2                     
+    jl OrigenInvalido
 
-    cmp word[fila], 1
-    jl invalido
-    cmp word[fila], 7
-    jg invalido
+    cmp word[filaOrigen], 0         
+    jl OrigenInvalido
+    cmp word[filaOrigen], 6
+    jg OrigenInvalido
 
-    cmp word[columna], 1
-    jl invalido
-    cmp word[columna], 7
-    jg invalido
+    cmp word[columnaOrigen], 0      
+    jl OrigenInvalido
+    cmp word[columnaOrigen], 6
+    jg OrigenInvalido
 
-    mov byte[inputValido], 'S'
+    mov byte[inputValido], 'S'      
 
-invalido:
+    OrigenInvalido:
     ret
+
+validarFilColDestino:
+    mov byte[inputValido], 'N'      ; Inicializar inputValido como 'N' (no válido)
+
+    mov rdi, rdi                  ; rdi contendrá la dirección de inputFilCol
+    mov rsi, formatoInputFilCol    
+    mov rdx, filaDestino            
+    mov rcx, columnaDestino        
+    sub rsp, 8
+    call sscanf                    
+    add rsp, 8
+
+    cmp rax, 2                     
+    jl DestinoInvalido
+
+    cmp word[filaDestino], 0         
+    jl DestinoInvalido
+    cmp word[filaDestino], 6
+    jg DestinoInvalido
+
+    cmp word[columnaDestino], 0      
+    jl DestinoInvalido
+    cmp word[columnaDestino], 6
+    jg DestinoInvalido
+
+    mov byte[inputValido], 'S'      
+
+    DestinoInvalido:
+    ret
+
+
+
+validarLugarSoldado:
+    movzx rax, byte[rsi]         ; Cargar la fila pasada en rsi
+    imul rax, 7                  ; Multiplicar fila por el número de columnas (7)
+    movzx rbx, byte[rdx]         ; Cargar la columna pasada en rdx
+    add rax, rbx                 ; Índice = fila * 7 + columna
+
+    mov cl, byte[tablero + rax]  ; Cargar el carácter correspondiente en el tablero
+
+    ; Comparar cl con dl
+    cmp cl, 'X'                  ; Comparar con el símbolo pasado en dl
+    jne lugarSoldadoInvalido     ; Saltar si no coinciden
+
+    mov rax, 1                   ; Retornar 1 si es válido
+    ret
+
+    lugarSoldadoInvalido:
+    xor rax, rax                 ; Retornar 0 si es inválido
+    ret
+
+validarLugarLibre:
+    movzx rax, byte[rsi]         ; Cargar la fila pasada en rsi
+    imul rax, 7                  ; Multiplicar fila por el número de columnas (7)
+    movzx rbx, byte[rdx]         ; Cargar la columna pasada en rdx
+    add rax, rbx                 ; Índice = fila * 7 + columna
+
+    mov cl, byte[tablero + rax]  ; Cargar el carácter correspondiente en el tablero
+
+    ; Comparar cl con dl
+    cmp cl, '_'                  ; Comparar con el símbolo pasado en dl
+    jne lugarLibreInvalido       ; Saltar si no coinciden
+
+    mov rax, 1                   ; Retornar 1 si es válido
+    ret
+
+    lugarLibreInvalido:
+    xor rax, rax                 ; Retornar 0 si es inválido
+    ret    
+
+
+
+
+
+validarMovimientoSoldado:
+    movzx rax, byte[filaDestino]
+    movzx rbx, byte[filaOrigen]
+    sub rax, rbx
+    cmp rax, 1
+    jne movimientoInvalido
+
+    movzx rax, byte[columnaDestino]
+    movzx rbx, byte[columnaOrigen]
+    sub rax, rbx
+    cmp rax, 1
+    jg movimientoInvalido
+
+    ; Validar que filaDestino > filaOrigen
+    movzx rax, byte[filaDestino]
+    movzx rbx, byte[filaOrigen]
+    cmp rax, rbx
+    jg movimientoValido
+
+    movimientoInvalido:
+    xor rax, rax
+    ret
+
+    movimientoValido:
+    mov rax, 1
+    ret
+
+
+
+
+
+
