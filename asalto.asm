@@ -43,8 +43,8 @@ extern toupper
 %endmacro
 
 section .data
-    mensajeInicial                      db      "Bienvenidos al juego 'El Asalto'",10,0
-    tablero                 times 49    db      " "
+    mensajeInicial                      db      "Bienvenidos al juego 'El Asalto'",0
+    tablero                 times 50    db      0                                           ;49 para los caracteres y 1 para el 0 que agrega fgets
     archivoTablero                      db      "tablero.txt",0
     archivoTableroGuardado              db      "tableroGuardado.txt",0
     mensajeErrorLectura                 db      "Hubo un error al leer: %s",10,0
@@ -90,7 +90,6 @@ main:
     cmp rax, 0
     jne finPrograma
 
-    
     sub rsp, 8
     call imprimirTablero
     add rsp, 8
@@ -136,7 +135,8 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
     cmp rax, 0
     jle inputInvalido
 
-    mov rdi, byte[inputChar]
+    xor rdi, rdi
+    mov dil, byte[inputChar]
     sub rsp, 8
     call toupper
     add rsp, 8
@@ -173,11 +173,12 @@ leerTablero:
     cmp rax, 0
     jle errorLecturaArchivo
 
+    mov qword[fileHandle], rax
+
     mov rdi, tablero
-    mov rsi, 49
+    mov rsi, 50
     mov rdx, qword[fileHandle]
     sub rsp, 8
-    Puts prueba
     call fgets
     add rsp, 8
 
@@ -194,34 +195,44 @@ leerTablero:
     mov rax, 1
 
     finLeerTablero:
+    mov rdi, qword[fileHandle]
+    sub rsp, 8
+    call fclose
+    add rsp, 8
+
     ret
-    
+
 
 imprimirTablero:
     Puts nuevaLinea
-    Puts e
-
-    mov rax, 0
-    imprimirPrimeraLinea:
     
-    mov rdi, formatoIndiceInt  
-    mov rsi, rax
+    mov rdi, e
     sub rsp, 8
     call printf
     add rsp, 8
 
-    inc rax
-    cmp rax, 6
+    mov r14, 0
+    imprimirPrimeraLinea:
+    
+    mov rdi, formatoIndiceInt  
+    mov rsi, r14
+    sub rsp, 8
+    call printf
+    add rsp, 8
+
+    inc r14
+    cmp r14, 6
     jle imprimirPrimeraLinea
 
     Puts nuevaLinea
 
-    mov rax, 0
-    mov rbx, 0
+    mov r13, 0
+    mov r14, 0
+    mov r15, 0
     imprimirFila:
     
     mov rdi, formatoIndiceInt  
-    mov rsi, rax
+    mov rsi, r13
     sub rsp, 8
     call printf
     add rsp, 8
@@ -229,18 +240,20 @@ imprimirTablero:
     imprimirCaracterTablero:
     mov rdi, formatoIndiceChar
     xor rsi, rsi
-    mov sil, byte[tablero+rbx]
+    mov sil, byte[tablero+r14+r15]
     sub rsp, 8
     call printf
     add rsp, 8
-    inc rbx
-    cmp rbx, 6
+    inc r15
+    cmp r15, 6
     jle imprimirCaracterTablero
+    add r14, r15
+    mov r15, 0
 
     Puts nuevaLinea
 
-    inc rax
-    cmp rax, 6
+    inc r13
+    cmp r13, 6
     jle imprimirFila
 
 
