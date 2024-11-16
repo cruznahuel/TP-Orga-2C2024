@@ -1,46 +1,5 @@
 global main
-extern gets
-extern puts
-extern printf
-extern scanf
-
-extern fgets
-extern fread 
-
-extern fputs
-extern fopen
-extern fgetc
-extern fclose
-extern strcpy
-extern strcmp
-extern toupper
-
-%macro Puts 1
-    mov rdi, %1
-    sub rsp, 8
-    call puts
-    add rsp, 8
-%endmacro
-%macro Gets 1
-    mov rdi, %1
-    sub rsp, 8
-    call gets
-    add rsp, 8
-%endmacro
-%macro Scanf 2
-    mov rdi, %1
-    mov rsi, %2
-    sub rsp, 8
-    call scanf
-    add rsp, 8
-%endmacro
-%macro Strcpy 2
-    mov rdi, %1
-    mov rsi, %2
-    sub rsp, 8
-    call strcpy
-    add rsp, 8
-%endmacro
+%include "imports.asm"
 
 section .data
     mensajeInicial                      db      "Bienvenidos al juego 'El Asalto'",0
@@ -54,6 +13,7 @@ section .data
     respuestaNegativa                   db      'N'
     mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
     formatoChar                         db      "%c",0    
+    formatoInputFilCol                  db      "%hi %hi", 0 ; Transformar los campos a nro entero (me sobra para guardar un nro entre 1 y 7)
 
 
 
@@ -66,12 +26,20 @@ section .data
 
     prueba                              db      "prueba",0
 
+    ; Seccion movimientos
+    mensajeIngFilCol                    db      "Ingrese fila (1 a 7) y columna (1 a 7) separados por un espacio: ", 0
+    mensajeErrorInput                   db      "Los datos ingresados son inválidos, intente nuevamente."
+    mensajeInputCorrecto                db      "Los datos son correctos"
+
 section .bss
     fileHandle                          resq    1
     archivoALeer                        resb    30
     inputStr                            resb    30
     inputChar                           resb    1
-
+    inputFilCol                         resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
+    fila                                resw    1
+    columna                             resw    1
+    inputValido                         resb    1 ; 'S' valido 'N' invalido
 
 
 
@@ -94,10 +62,24 @@ main:
     call imprimirTablero
     add rsp, 8
 
+    Puts mensajeIngFilCol
+    Gets inputFilCol
 
+    sub rsp, 8
+    call validarFilCol
+    add rsp, 8
+
+    cmp byte[inputValido], 'S'
+    je continuar
+
+    Puts mensajeErrorInput
+
+    jmp main
+
+    continuar:
+
+    Puts mensajeInputCorrecto
     ; ...
-
-
 
     finPrograma:
     ret
@@ -257,4 +239,35 @@ imprimirTablero:
     jle imprimirFila
 
 
+    ret
+
+
+
+validarFilCol: 
+    mov byte[inputValido], 'N'
+
+    mov rdi, inputFilCol
+    mov rsi, formatoInputFilCol
+    mov rdx, fila
+    mov rcx, columna
+    sub rsp, 8
+    call sscanf
+    add rsp, 8
+
+    cmp rax, 2
+    jl invalido
+
+    cmp word[fila], 1
+    jl invalido
+    cmp word[fila], 7
+    jg invalido
+
+    cmp word[columna], 1
+    jl invalido
+    cmp word[columna], 7
+    jg invalido
+
+    mov byte[inputValido], 'S'
+
+invalido:
     ret
