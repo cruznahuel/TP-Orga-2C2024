@@ -38,8 +38,10 @@ section .data
     mensajeLugarLibreValido             db      "La posición seleccionada está efectivamente libre", 0
     mensajeErrorMovimiento              db      "El movimiento planteado no es valido", 0
     mensajeMovimientoValido             db      "El movimiento planteado es correcto", 0
-
-
+    mensajeTurnoOficial                 db      "Es turno del oficial para mover", 0
+    mensajeTurnoOficial                 db      "Es turno del soldado para mover", 0
+    mensajeErrorOficial                 db      "No hay un oficial presente en esta posición", 0
+    mensajeOficialValido                db      "La posición indicada tiene efectivamente un oficial", 0
 
 
 section .bss

@@ -40,6 +40,8 @@ ingresarDatos:
     jmp main
 
 turnoSoldadoValidar:
+    Puts mensajeTurnoSoldado
+    
     xor rax, rax  
     sub rsp, 8
     mov rsi, filaOrigen
@@ -73,12 +75,12 @@ soldadoValido:
     add rsp, 8
 
     cmp rax, 1
-    je lugarLibreValido       
+    je lugarLibreValidoSoldado  
 
     Puts mensajeErrorLugarLibre
     jmp soldadoValido               
 
-lugarLibreValido:
+lugarLibreValidoSoldado:
     Puts mensajeLugarLibreValido
     sub rsp, 8
     call validarMovimientoSoldado
@@ -108,9 +110,75 @@ movimientoSoldadoValido:
     ret
 
 turnoOficialValidar:
+    Puts mensajeTurnoOficial
+
+    xor rax, rax  
+    sub rsp, 8
+    mov rsi, filaOrigen
+    mov rdx, columnaOrigen
+    
+    call validarLugarOficial
+    add rsp, 8
+
+    cmp rax, 1
+    je oficialValido       
+
+    Puts mensajeErrorOficial
+    jmp main  
+
+oficialValido:
+    Puts mensajeOficialValido
+
+    Puts mensajeIngFilColDestino
+    Gets inputFilColDestino
+
+    lea rdi, [inputFilColDestino]
+    sub rsp, 8
+    call validarFilColDestino
+    add rsp, 8
+
+    sub rsp, 8
+    mov rsi, filaDestino
+    mov rdx, columnaDestino
+    
+    call validarLugarLibre
+    add rsp, 8
+
+    cmp rax, 1
+    je lugarLibreValidoOficial       
+
+    Puts mensajeErrorLugarLibre
+    jmp oficialValido  
+
+lugarLibreValidoOficial:
+    Puts mensajeLugarLibreValido
+    sub rsp, 8
+    call validarMovimientoOficial
+    add rsp, 8
+
+    cmp rax, 1
+    je movimientoOficialValido
+
+    Puts mensajeErrorMovimiento
+    jmp oficialValido
+
+movimientoOficialValido:
     Puts mensajeMovimientoValido
 
-                
+    sub rsp, 8
+    call realizarMovimientoOficial
+    add rsp, 8
+
+    sub rsp, 8
+    call imprimirTablero
+    add rsp, 8
+
+    sub rsp, 8
+    call siguienteTurno
+    add rsp, 8
+
+    ret
+
 finPrograma:
     ret
 
