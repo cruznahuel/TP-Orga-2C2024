@@ -1,3 +1,27 @@
+chequearTurno:
+    mov al, [turnoSoldado]  ; Cargamos el valor de turnoSoldado (1 para soldados, 0 para oficiales)
+    
+    cmp al, 1
+    je turnoSoldadoValidar   ; Si es el turno de los soldados, llamar a la rutina de validación de soldados
+
+    cmp al, 0
+    je turnoOficialValidar   ; Si es el turno de los oficiales, llamar a la rutina de validación de oficiales
+
+    jmp finPrograma
+
+
+siguienteTurno:    
+    mov al, [turnoSoldado]  
+    xor al, 1               
+    mov [turnoSoldado], al  
+            
+    sub rsp, 8
+    call ingresarDatos
+    add rsp, 8
+
+    ret     
+
+
 validarFilColOrigen:
     mov byte[inputValido], 'N'      ; Inicializar inputValido como 'N' (no válido)
 
