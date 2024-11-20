@@ -45,3 +45,9 @@ extern toupper
     call strcpy
     add rsp, 8
 %endmacro
+
+%macro callAndAdjustStack 1
+    sub rsp, 8
+    call %1
+    add rsp, 8
+%endmacro

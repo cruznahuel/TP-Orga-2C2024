@@ -39,7 +39,7 @@ section .data
     mensajeErrorMovimiento              db      "El movimiento planteado no es valido", 0
     mensajeMovimientoValido             db      "El movimiento planteado es correcto", 0
     mensajeTurnoOficial                 db      "Es turno del oficial para mover", 0
-    mensajeTurnoOficial                 db      "Es turno del soldado para mover", 0
+    mensajeTurnoSoldado                 db      "Es turno del soldado para mover", 0
     mensajeErrorOficial                 db      "No hay un oficial presente en esta posición", 0
     mensajeOficialValido                db      "La posición indicada tiene efectivamente un oficial", 0
 
@@ -57,3 +57,5 @@ section .bss
     filaDestino                         resw    1
     columnaDestino                      resw    1
     turnoSoldado                        resb    1
+    desplazamientoOrigen                resw    1
+    desplazamientoDestino               resw    1

@@ -4,34 +4,29 @@ global main
 %include "tablero.asm"
 %include "data.asm"
 
+
 section .text
 main:
     mov byte [turnoSoldado], 1
 
     Puts mensajeInicial
     
-    sub rsp, 8
-    call verificarTableroGuardado
-    add rsp, 8
-
-    sub rsp, 8
-    call leerTablero        ; devuelve 0 si se pudo leer el archivo
-    add rsp, 8
+    callAndAdjustStack verificarTableroGuardado
+    
+    callAndAdjustStack leerTablero        ; devuelve 0 si se pudo leer el archivo
+ 
     cmp rax, 0
     jne finPrograma
 
-    sub rsp, 8
-    call imprimirTablero
-    add rsp, 8
+    callAndAdjustStack imprimirTablero
 
 ingresarDatos:
     Puts mensajeIngFilColOrigen
     Gets inputFilColOrigen
 
     lea rdi, [inputFilColOrigen]
-    sub rsp, 8
-    call validarFilColOrigen
-    add rsp, 8
+
+    callAndAdjustStack validarFilColOrigen
 
     cmp byte [inputValido], 'S'
     je chequearTurno
@@ -43,12 +38,12 @@ turnoSoldadoValidar:
     Puts mensajeTurnoSoldado
     
     xor rax, rax  
-    sub rsp, 8
+   
     mov rsi, filaOrigen
     mov rdx, columnaOrigen
     
-    call validarLugarSoldado
-    add rsp, 8
+    mov rdi, 'X'
+    callAndAdjustStack validarLugar
 
     cmp rax, 1
     je soldadoValido       
@@ -63,16 +58,14 @@ soldadoValido:
     Gets inputFilColDestino
 
     lea rdi, [inputFilColDestino]
-    sub rsp, 8
-    call validarFilColDestino
-    add rsp, 8
 
-    sub rsp, 8
+    callAndAdjustStack validarFilColDestino
+
     mov rsi, filaDestino
     mov rdx, columnaDestino
     
-    call validarLugarLibre
-    add rsp, 8
+    mov rdi, '_'
+    callAndAdjustStack validarLugar
 
     cmp rax, 1
     je lugarLibreValidoSoldado  
@@ -82,9 +75,7 @@ soldadoValido:
 
 lugarLibreValidoSoldado:
     Puts mensajeLugarLibreValido
-    sub rsp, 8
-    call validarMovimientoSoldado
-    add rsp, 8
+    callAndAdjustStack validarMovimientoSoldado
 
     cmp rax, 1
     je movimientoSoldadoValido
@@ -95,17 +86,11 @@ lugarLibreValidoSoldado:
 movimientoSoldadoValido:
     Puts mensajeMovimientoValido
 
-    sub rsp, 8
-    call realizarMovimientoSoldado
-    add rsp, 8
+    callAndAdjustStack realizarMovimientoSoldado
 
-    sub rsp, 8
-    call imprimirTablero
-    add rsp, 8
+    callAndAdjustStack imprimirTablero
 
-    sub rsp, 8
-    call siguienteTurno
-    add rsp, 8
+    callAndAdjustStack siguienteTurno
 
     ret
 
@@ -113,18 +98,17 @@ turnoOficialValidar:
     Puts mensajeTurnoOficial
 
     xor rax, rax  
-    sub rsp, 8
     mov rsi, filaOrigen
     mov rdx, columnaOrigen
-    
-    call validarLugarOficial
-    add rsp, 8
+
+    mov rdi, 'O'
+    callAndAdjustStack validarLugar
 
     cmp rax, 1
     je oficialValido       
 
     Puts mensajeErrorOficial
-    jmp main  
+    jmp ingresarDatos  
 
 oficialValido:
     Puts mensajeOficialValido
@@ -133,16 +117,12 @@ oficialValido:
     Gets inputFilColDestino
 
     lea rdi, [inputFilColDestino]
-    sub rsp, 8
-    call validarFilColDestino
-    add rsp, 8
-
-    sub rsp, 8
+    callAndAdjustStack validarFilColDestino
     mov rsi, filaDestino
     mov rdx, columnaDestino
-    
-    call validarLugarLibre
-    add rsp, 8
+
+    mov rdi, '_'
+    callAndAdjustStack validarLugar
 
     cmp rax, 1
     je lugarLibreValidoOficial       
@@ -152,9 +132,7 @@ oficialValido:
 
 lugarLibreValidoOficial:
     Puts mensajeLugarLibreValido
-    sub rsp, 8
-    call validarMovimientoOficial
-    add rsp, 8
+    callAndAdjustStack validarMovimientoOficial
 
     cmp rax, 1
     je movimientoOficialValido
@@ -165,17 +143,11 @@ lugarLibreValidoOficial:
 movimientoOficialValido:
     Puts mensajeMovimientoValido
 
-    sub rsp, 8
-    call realizarMovimientoOficial
-    add rsp, 8
+    callAndAdjustStack realizarMovimientoOficial
 
-    sub rsp, 8
-    call imprimirTablero
-    add rsp, 8
+    callAndAdjustStack imprimirTablero
 
-    sub rsp, 8
-    call siguienteTurno
-    add rsp, 8
+    callAndAdjustStack siguienteTurno
 
     ret
 
