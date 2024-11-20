@@ -1,6 +1,7 @@
 global main
 %include "imports.asm"
 %include "movimientos.asm"
+%include "validaciones.asm"
 %include "tablero.asm"
 %include "data.asm"
 
@@ -25,11 +26,14 @@ ingresarDatos:
     Gets inputFilColOrigen
 
     lea rdi, [inputFilColOrigen]
-
-    callAndAdjustStack validarFilColOrigen
-
+                   
+    mov rdx, filaOrigen           
+    mov rcx, columnaOrigen 
+    
+    callAndAdjustStack validarFilCol
+    
     cmp byte [inputValido], 'S'
-    je chequearTurno
+    je validarTurno
 
     Puts mensajeErrorInput
     jmp main
@@ -59,7 +63,13 @@ soldadoValido:
 
     lea rdi, [inputFilColDestino]
 
-    callAndAdjustStack validarFilColDestino
+    mov rdx, filaDestino           
+    mov rcx, columnaDestino
+
+    callAndAdjustStack validarFilCol
+
+    cmp byte [inputValido], 'S'
+    jne inputDestinoSoldadoInvalido
 
     mov rsi, filaDestino
     mov rdx, columnaDestino
@@ -71,7 +81,12 @@ soldadoValido:
     je lugarLibreValidoSoldado  
 
     Puts mensajeErrorLugarLibre
-    jmp soldadoValido               
+    jmp soldadoValido
+
+    inputDestinoSoldadoInvalido:
+    Puts mensajeErrorInput
+    jmp soldadoValido
+
 
 lugarLibreValidoSoldado:
     Puts mensajeLugarLibreValido
@@ -86,7 +101,8 @@ lugarLibreValidoSoldado:
 movimientoSoldadoValido:
     Puts mensajeMovimientoValido
 
-    callAndAdjustStack realizarMovimientoSoldado
+    mov byte [caracter], 'X'
+    callAndAdjustStack realizarMovimiento
 
     callAndAdjustStack imprimirTablero
 
@@ -117,7 +133,15 @@ oficialValido:
     Gets inputFilColDestino
 
     lea rdi, [inputFilColDestino]
-    callAndAdjustStack validarFilColDestino
+
+    mov rdx, filaDestino           
+    mov rcx, columnaDestino
+
+    callAndAdjustStack validarFilCol
+
+    cmp byte [inputValido], 'S'
+    jne inputDestinoOficialInvalido
+
     mov rsi, filaDestino
     mov rdx, columnaDestino
 
@@ -129,6 +153,10 @@ oficialValido:
 
     Puts mensajeErrorLugarLibre
     jmp oficialValido  
+
+    inputDestinoOficialInvalido:
+    Puts mensajeErrorInput
+    jmp oficialValido
 
 lugarLibreValidoOficial:
     Puts mensajeLugarLibreValido
@@ -143,7 +171,8 @@ lugarLibreValidoOficial:
 movimientoOficialValido:
     Puts mensajeMovimientoValido
 
-    callAndAdjustStack realizarMovimientoOficial
+    mov byte [caracter], 'O'
+    callAndAdjustStack realizarMovimiento
 
     callAndAdjustStack imprimirTablero
 

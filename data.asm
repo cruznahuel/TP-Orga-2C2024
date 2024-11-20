@@ -33,6 +33,7 @@ section .data
     soldado                             db      'X' ; Defino variable soldado con valor 'X'
     oficial                             db      'O' ; Defino variable oficial con valor 'O'
     lugarLibre                          db      '_' ; Defino variable lugarLibre con valor '_'
+     
 
     mensajeErrorLugarLibre              db      "La posición seleccionada no está libre, por favor ingrese nuevamente", 0
     mensajeLugarLibreValido             db      "La posición seleccionada está efectivamente libre", 0
@@ -59,3 +60,4 @@ section .bss
     turnoSoldado                        resb    1
     desplazamientoOrigen                resw    1
     desplazamientoDestino               resw    1
+    caracter                            resb    1
