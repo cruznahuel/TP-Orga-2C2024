@@ -189,7 +189,7 @@ realizarMovimientoOficial:
 
     callAndAdjustStack calcularDesplazamiento
 
-    lea r8, [tablero + rax]
+    lea r9, [tablero + rax]
 
     ; Colocar 'O' en la posición de destino
     mov byte [r9], 'O'
