@@ -44,20 +44,21 @@ section .data
     mensajeErrorOficial                 db      "No hay un oficial presente en esta posición", 0
     mensajeOficialValido                db      "La posición indicada tiene efectivamente un oficial", 0
 
+    turnoSoldado                        db      1
+
 
 section .bss
     fileHandle                          resq    1
     archivoALeer                        resb    30
     inputStr                            resb    30
     inputChar                           resb    1
-    inputFilColOrigen                   resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
+    inputFilCol                         resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
     filaOrigen                          resw    1
     columnaOrigen                       resw    1
     inputValido                         resb    1 ; 'S' valido 'N' invalido
     inputFilColDestino                  resb    50
     filaDestino                         resw    1
     columnaDestino                      resw    1
-    turnoSoldado                        resb    1
     desplazamientoOrigen                resw    1
     desplazamientoDestino               resw    1
     caracter                            resb    1

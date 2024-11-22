@@ -1,10 +1,23 @@
+ingresarDatos:
+    Puts mensajeIngFilColOrigen
+    Gets inputFilCol
+
+    lea rdi, [inputFilCol]
+                   
+    mov rdx, r12           
+    mov rcx, r13 
+    
+    callAndAdjustStack validarFilCol
+    
+    ret
+
 
 siguienteTurno:    
     mov al, [turnoSoldado]  
     xor al, 1               
     mov [turnoSoldado], al  
     
-    callAndAdjustStack ingresarDatos
+    callAndAdjustStack iniciarTurno
 
     ret     
 

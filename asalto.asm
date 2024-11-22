@@ -8,8 +8,6 @@ global main
 
 section .text
 main:
-    mov byte [turnoSoldado], 1
-
     Puts mensajeInicial
     
     callAndAdjustStack verificarTableroGuardado
@@ -19,33 +17,24 @@ main:
     cmp rax, 0
     jne finPrograma
 
+iniciarTurno:
+
     callAndAdjustStack imprimirTablero
 
-ingresarDatos:
-    Puts mensajeIngFilColOrigen
-    Gets inputFilColOrigen
+    mov r12, filaOrigen      
+    mov r13, columnaOrigen   
+    callAndAdjustStack ingresarDatos
 
-    lea rdi, [inputFilColOrigen]
-                   
-    mov rdx, filaOrigen           
-    mov rcx, columnaOrigen 
-    
-    callAndAdjustStack validarFilCol
-    
     cmp byte [inputValido], 'S'
     je validarTurno
 
     Puts mensajeErrorInput
-    jmp main
+    jmp iniciarTurno
+
 
 turnoSoldadoValidar:
     Puts mensajeTurnoSoldado
-    
-    xor rax, rax  
-   
-    mov rsi, filaOrigen
-    mov rdx, columnaOrigen
-    
+       
     mov rdi, 'X'
     callAndAdjustStack validarLugar
 
@@ -53,24 +42,18 @@ turnoSoldadoValidar:
     je soldadoValido       
 
     Puts mensajeErrorSoldado
-    jmp main               
+    jmp iniciarTurno               
 
 soldadoValido:
-    Puts mensajeSoldadoValido
-
-    Puts mensajeIngFilColDestino
-    Gets inputFilColDestino
-
-    lea rdi, [inputFilColDestino]
-
-    mov rdx, filaDestino           
-    mov rcx, columnaDestino
-
-    callAndAdjustStack validarFilCol
-
-    cmp byte [inputValido], 'S'
-    jne inputDestinoSoldadoInvalido
     
+    mov r12, filaDestino      
+    mov r13, columnaDestino   
+    callAndAdjustStack ingresarDatos
+    
+    cmp byte [inputValido], 'S'
+    je inputSoldadoValido
+
+    inputSoldadoValido:
     mov rdi, '_'
     callAndAdjustStack validarLugar
 
@@ -80,12 +63,9 @@ soldadoValido:
     Puts mensajeErrorLugarLibre
     jmp soldadoValido
 
-    inputDestinoSoldadoInvalido:
-    Puts mensajeErrorInput
-    jmp soldadoValido
-
 
 lugarLibreValidoSoldado:
+
     Puts mensajeLugarLibreValido
     callAndAdjustStack validarMovimientoSoldado
 
@@ -96,6 +76,7 @@ lugarLibreValidoSoldado:
     jmp soldadoValido
 
 movimientoSoldadoValido:
+
     Puts mensajeMovimientoValido
 
     mov byte [caracter], 'X'
@@ -108,11 +89,8 @@ movimientoSoldadoValido:
     ret
 
 turnoOficialValidar:
-    Puts mensajeTurnoOficial
 
-    xor rax, rax  
-    mov rsi, filaOrigen
-    mov rdx, columnaOrigen
+    Puts mensajeTurnoOficial
 
     mov rdi, 'O'
     callAndAdjustStack validarLugar
@@ -126,19 +104,14 @@ turnoOficialValidar:
 oficialValido:
     Puts mensajeOficialValido
 
-    Puts mensajeIngFilColDestino
-    Gets inputFilColDestino
-
-    lea rdi, [inputFilColDestino]
-
-    mov rdx, filaDestino           
-    mov rcx, columnaDestino
-
-    callAndAdjustStack validarFilCol
-
+    mov r12, filaDestino      ; Se debería poder remover, ya definido en soldado
+    mov r13, columnaDestino   ; Se debería poder remover, ya definido en soldado
+    callAndAdjustStack ingresarDatos
+    
     cmp byte [inputValido], 'S'
-    jne inputDestinoOficialInvalido
+    je inputOficialValido
 
+    inputOficialValido:
     mov rdi, '_'
     callAndAdjustStack validarLugar
 
@@ -148,12 +121,9 @@ oficialValido:
     Puts mensajeErrorLugarLibre
     jmp oficialValido  
 
-    inputDestinoOficialInvalido:
-    Puts mensajeErrorInput
-    jmp oficialValido
-
 lugarLibreValidoOficial:
     Puts mensajeLugarLibreValido
+
     callAndAdjustStack validarMovimientoOficial
 
     cmp rax, 1
@@ -166,6 +136,7 @@ movimientoOficialValido:
     Puts mensajeMovimientoValido
 
     mov byte [caracter], 'O'
+
     callAndAdjustStack realizarMovimiento
 
     callAndAdjustStack imprimirTablero
