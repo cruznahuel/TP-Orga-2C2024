@@ -70,9 +70,6 @@ soldadoValido:
 
     cmp byte [inputValido], 'S'
     jne inputDestinoSoldadoInvalido
-
-    mov rsi, filaDestino
-    mov rdx, columnaDestino
     
     mov rdi, '_'
     callAndAdjustStack validarLugar
@@ -141,9 +138,6 @@ oficialValido:
 
     cmp byte [inputValido], 'S'
     jne inputDestinoOficialInvalido
-
-    mov rsi, filaDestino
-    mov rdx, columnaDestino
 
     mov rdi, '_'
     callAndAdjustStack validarLugar

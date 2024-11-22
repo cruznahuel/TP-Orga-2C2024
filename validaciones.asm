@@ -14,25 +14,22 @@ validarFilCol:
     
     mov rsi, formatoInputFilCol    
 
-    push rdx
-    push rcx
+    mov r12, rdx                    ; Guardar rdx en un registro no volátil
+    mov r13, rcx                    ; Guardar rcx en otro registro no volátil
 
     callAndAdjustStack sscanf
 
     cmp rax, 2                     
     jl OrigenInvalido
-    
-    pop rdx
-    pop rcx
-    
-    cmp word[rdx], 0         
+
+    cmp word[r12], 0               
     jl OrigenInvalido
-    cmp word[rdx], 6
+    cmp word[r12], 6
     jg OrigenInvalido
 
-    cmp word[rcx], 0      
+    cmp word[r13], 0               
     jl OrigenInvalido
-    cmp word[rcx], 6
+    cmp word[r13], 6
     jg OrigenInvalido
 
     mov byte[inputValido], 'S'      
@@ -41,10 +38,11 @@ validarFilCol:
     ret
 
 
+
 validarLugar:
-    movzx rax, byte[rsi]               
+    movzx rax, byte[r12]               
     imul rax, 7                
-    movzx rbx, byte[rdx]                 
+    movzx rbx, byte[r13]                 
     add rax, rbx                
 
     mov cl, byte[tablero + rax] 
