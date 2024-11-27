@@ -45,15 +45,6 @@ extern toupper
     add rsp, 8
 %endmacro
 
-%macro Scanf3 3
-    mov rdi, %1
-    mov rsi, %2
-    mov rdx, %3
-    sub rsp, 8
-    call scanf
-    add rsp, 8
-%endmacro
-
 %macro Sscanf4 4
     mov rdi, %1
     mov rsi, %2
@@ -63,7 +54,6 @@ extern toupper
     call sscanf
     add rsp, 8
 %endmacro
-
 
 %macro Strcpy 2
     mov rdi, %1
