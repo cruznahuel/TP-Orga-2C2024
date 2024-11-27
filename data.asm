@@ -32,11 +32,9 @@ section .data
     mensajeIngFilColDestino             db      "-->Ingrese fila (0 a 6) y columna (0 a 6) a la que se desea mover separados por un espacio: ", 0
     mensajeFormatoIncorrecto            db      "El formato es incorrecto, ingrese nuevamente.",0
     mensajeFilColFueraTablero           db      "La posicion es inválida, ingrese nuevamente.",0
-    mensajeNoHayJugador                 db      "En la posicion elegida no hay un %s, ingrese nuevamente",10,0
-    mensajeErrorMovimiento              db      "El movimiento planteado es inválido", 0
+    mensajeNoHayJugador                 db      "En la posicion elegida no hay un %s, ingrese nuevamente.",10,0
+    mensajeErrorMovimiento              db      "El movimiento planteado es inválido, ingrese nuevamente.", 0
 
-    formatoPrintNumero                  db      "%li",10,0
-    ;formatoPrintChar                    db      "%c",10,0
 
 
 
@@ -52,10 +50,14 @@ section .bss
     inputFilCol                         resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
     inputValido                         resb    1  
     nombreJugador                       resb    10  ;Tiene valor "soldado" u "oficial". Se setea el valor segun el turno, y sirve para el mensaje "mensajeNoHayJugador"
-    fila                                resb    1
-    columna                             resb    1
+    inputFila                           resb    1
+    inputColumna                        resb    1
     filaOrigen                          resb    1
     columnaOrigen                       resb    1
     filaDestino                         resb    1
     columnaDestino                      resb    1
     caracter                            resb    1
+    direccionFuncion                    resq    1
+    posicionDestino                     resb    1
+    posicionOrigen                      resb    1
+    diff                                resb    1

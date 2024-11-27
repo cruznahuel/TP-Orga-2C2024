@@ -26,12 +26,12 @@ turnoOficiales:
     ret
 
 realizarTurno:
-    mov r15b, r12b
+    mov byte[caracter], r12b
     sub rsp, 8
     call pedirPosicionOrigen
     add rsp, 8
 
-    mov r15, r13
+    mov qword[direccionFuncion], r13
     sub rsp, 8
     call pedirPosicionDestino
     add rsp, 8

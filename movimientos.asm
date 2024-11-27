@@ -1,6 +1,6 @@
 pedirPosicion:
     Gets inputFilCol
-    Sscanf4 inputFilCol, formatoInputFilCol, fila, columna
+    Sscanf4 inputFilCol, formatoInputFilCol, inputFila, inputColumna
     cmp rax, 2
     jne pedirPosicion_FormatoIncorrecto
 
@@ -37,10 +37,17 @@ pedirPosicionOrigen:
     jmp pedirPosOrigen
 
     finPedirPosicionOrigen:
-    mov al, byte[fila]
+    mov al, byte[inputFila]
     mov byte[filaOrigen], al
-    mov al, byte[columna]
+    mov al, byte[inputColumna]
     mov byte[columnaOrigen], al
+
+    movzx rax, byte[filaOrigen]
+    movzx rbx, byte[columnaOrigen]
+    sub rsp, 8
+    call calcularDesplazamiento
+    add rsp, 8
+    mov byte[posicionOrigen], al
 
     ret
 
@@ -52,7 +59,7 @@ pedirPosicionDestino:
     add rsp, 8
 
     sub rsp, 8
-    call r15
+    call qword[direccionFuncion]
     add rsp, 8
     cmp rax, 0
     je finPedirPosicionDestino
@@ -61,9 +68,9 @@ pedirPosicionDestino:
     jmp pedirPosDestino
 
     finPedirPosicionDestino:
-    mov al, byte[fila]
+    mov al, byte[inputFila]
     mov byte[filaDestino], al
-    mov al, byte[columna]
+    mov al, byte[inputColumna]
     mov byte[columnaDestino], al
 
     ret
