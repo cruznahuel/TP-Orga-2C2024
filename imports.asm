@@ -63,6 +63,12 @@ extern toupper
     add rsp, 8
 %endmacro
 
+%macro limpiarTerminal 0
+    mov rdi, cmd_clear
+    sub rsp, 8
+    call system
+    add rsp, 8
+%endmacro
 ;%macro callAndAdjustStack 1
 ;    sub rsp, 8
 ;    call %1

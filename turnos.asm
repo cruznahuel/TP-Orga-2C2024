@@ -78,12 +78,57 @@ actualizarEstadoJuego:
 
     ganadoresOficiales:
     Strcpy ganador, oficiales
+    Strcpy motivoGanador, mensajeSoldadosInsuficientes
     mov byte[juegoTerminado], 'S'
     jmp finActualizarEstadoJuego
 
     ganadoresSoldados:
     Strcpy ganador, soldados
+    cmp byte[cantidadOficiales], 0
+    je motivoOficialesRetirados
+    Strcpy motivoGanador, mensajeFortalezaOcupada
+    n:
     mov byte[juegoTerminado], 'S'
+    jmp finActualizarEstadoJuego
+
+    motivoOficialesRetirados:
+    Strcpy motivoGanador, mensajeOficialesRetirados
+    jmp n
 
     finActualizarEstadoJuego:
+    ret
+
+comentarioJugada:
+    cmp byte[hayObligacionDeCapturar], 'N'
+    je comentarioVacio
+
+    cmp byte[hayObligacionDeCapturar], 'S'
+    sete al
+    cmp byte[oficialCaptura], 'S'
+    sete bl
+    and al, bl
+    cmp al, 1
+    je comentarioSoldadoCapturado
+
+    cmp byte[hayObligacionDeCapturar], 'S'
+    sete al
+    cmp byte[oficialCaptura], 'N'
+    sete bl
+    and al, bl
+    cmp al, 1
+    je comentarioOficialRetirado
+
+    comentarioVacio:
+    Strcpy comentarioJugadaStr, mensajeVacio
+    jmp finComentarioJugada
+
+    comentarioOficialRetirado:
+    Strcpy comentarioJugadaStr, mensajeOficialRetirado
+    jmp finComentarioJugada
+
+    comentarioSoldadoCapturado:
+    Strcpy comentarioJugadaStr, mensajeSoldadoCapturado
+
+    finComentarioJugada:
+    Printf2 comentario, comentarioJugadaStr
     ret

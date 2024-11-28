@@ -1,6 +1,8 @@
 section .data
     cmd_clear                           db      "clear",0
-    mensajeInicial                      db      "Bienvenidos al juego 'El Asalto'",0
+    mensajeInicial                      db      "'El Asalto'.",10,"Reglas:",0
+    reglasSoldados                      db      "-Los soldados (X) solo se pueden mover hacia abajo en linea recta o en diagonal, y solo en una unidad, a excepción de los de la posicion 4-0, 4-1, 4-5 y 4-6, que pueden moverse horizontalmente.",0
+    reglasOficiales                     db      "-Los oficiales (O) pueden moverse en cualquier dirección en una unidad. El soldado elegido no puede desentenderse de su obligación de capturar a los soldados, y si así lo hace, es retirado.",0
     tablero                 times 50    db      0                                           ;49 para los caracteres y 1 para el 0 que agrega fgets
     archivoTablero                      db      "tablero.txt",0
     archivoTableroGuardado              db      "tableroGuardado.txt",0
@@ -15,8 +17,8 @@ section .data
     juegoTerminado                      db      'N'
     turnoJugador                        db      0   ;0 representa Soldados, 1 representa Oficiales
     mensajeDelGanador                   db      "Los ganadores son los %s",10,0
-    oficiales                           db      "OFICIALES",0
-    soldados                            db      "SOLDADOS",0
+    oficiales                           db      "OFICIALES (O)",0
+    soldados                            db      "SOLDADOS (X)",0
     mensajeTurno                        db      "Turno de: %s",10,0
     strOficial                          db      "oficial",0
     strSoldado                          db      "soldado",0
@@ -40,11 +42,18 @@ section .data
     diffPosCercanas                     db      -8,-7,-6,-1,1,6,7,8
     diffPosLejanas                      db      -16,-14,-12,-2,2,12,14,16
 
-                 
+    hayObligacionDeCapturar             db      'N'   ; S o N en ejecucion
+    oficialCaptura                      db      'N'   ; S o N en ejecucion
 
-
-
-
+    ;Comentario de la jugada
+    comentario                          db      "Comentario jugada: %s",10,0
+    mensajeSoldadoCapturado             db      "se capturó un soldado.",0
+    mensajeOficialRetirado              db      "el oficial no capturó y fue retirado.",0
+    mensajeVacio                        db      "",0
+    ;Motivos de la victoria
+    mensajeFortalezaOcupada             db      "Motivo: La fortaleza fue ocupada completamente.",0
+    mensajeOficialesRetirados           db      "Motivo: Los dos oficiales fueron retirados.",0
+    mensajeSoldadosInsuficientes        db      "Motivo: Los soldados ya no pueden ocupar la fortaleza.",0
 
 section .bss
     fileHandle                          resq    1
@@ -52,7 +61,7 @@ section .bss
     inputStr                            resb    30
     inputChar                           resb    1
     ganador                             resb    10
-    inputFilCol                         resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
+    inputFilCol                         resb    50  ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
     inputValido                         resb    1  
     nombreJugador                       resb    10  ;Tiene valor "soldado" u "oficial". Se setea el valor segun el turno, y sirve para el mensaje "mensajeNoHayJugador"
     inputFila                           resb    1
@@ -67,7 +76,6 @@ section .bss
     posicionOrigen                      resb    1
     diff                                resb    1
     
-
     haySoldadoCerca                     resb    1   ; S o N
     sePuedeCapturar                     resb    1   ; S o N
 
@@ -75,9 +83,9 @@ section .bss
     cantidadDeSoldadosCerca             resb    1
     
     posicionesDestinoParaCapturar       resb    8   ; si el soldado está completamente rodeado, puede pasar que tenga 8 posiciones disponibles para capturar a cualquier soldado
-    cantidadPosicionesDestinoParaCapturar resb 1
+    cantidadPosicionesDestinoParaCapturar   resb 1
 
-    hayObligacionDeCapturar             resb    1   ; S o N
-    soldadoCaptura                      resb    1   ; S o N
     posicionSoldadoCapturado            resb    1
-    
+
+    comentarioJugadaStr                 resb    100
+    motivoGanador                       resb    100

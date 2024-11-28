@@ -47,6 +47,8 @@ validarLugar:
     ret
 
 validarPosicionDestinoSoldado:
+    mov byte[hayObligacionDeCapturar], 'N'
+    
     mov byte[caracter], '_'
     sub rsp, 8
     call validarLugar
@@ -231,7 +233,7 @@ validarPosicionDestinoOficial:
     jmp verificarSiElMovimientoElegidoEsCercano
 
     soldadoEligeNoCapturar:
-    mov byte[soldadoCaptura], 'N'
+    mov byte[oficialCaptura], 'N'
     jmp movimientoValidoOficial
 
 
@@ -256,7 +258,7 @@ validarPosicionDestinoOficial:
     cmp byte[posicionesDestinoParaCapturar + rbx], al
     jne iterarDiffPosicionesLejanasParaVerificarCaptura
 
-    mov byte[soldadoCaptura], 'S'
+    mov byte[oficialCaptura], 'S'
     ;Necesito guardar la posicion del soldado capturado
     mov al, byte[diff]
     cbw

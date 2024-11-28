@@ -9,7 +9,11 @@ global main
 
 section .text
 main:
+    limpiarTerminal
+
     Puts mensajeInicial
+    Puts reglasSoldados
+    Puts reglasOficiales
     
     sub rsp, 8
     call verificarTableroGuardado
@@ -31,9 +35,10 @@ main:
 
     
     loopJuego:
-    mov rdi, cmd_clear
+    limpiarTerminal
+
     sub rsp, 8
-    call system
+    call comentarioJugada
     add rsp, 8
 
     sub rsp, 8
@@ -64,6 +69,8 @@ main:
     sub rsp, 8
     call printf
     add rsp, 8
+
+    Puts motivoGanador
 
     finPrograma:
     ret

@@ -89,7 +89,7 @@ realizarMovimiento:
     
     cmp byte[hayObligacionDeCapturar], 'S'
     sete al
-    cmp byte[soldadoCaptura], 'S'
+    cmp byte[oficialCaptura], 'S'
     sete bl
     and al, bl
     cmp al, 1
@@ -97,7 +97,7 @@ realizarMovimiento:
 
     cmp byte[hayObligacionDeCapturar], 'S'
     sete al
-    cmp byte[soldadoCaptura], 'N'
+    cmp byte[oficialCaptura], 'N'
     sete bl
     and al, bl
     cmp al, 1
