@@ -48,7 +48,42 @@ realizarTurno:
     ret
 
 actualizarEstadoJuego:
+    ;Chequeo si se removieron todos los oficiales
+    cmp byte[cantidadOficiales], 0
+    je ganadoresSoldados
 
+    ;Chequeo si la cantidad de soldados es menor a la cantidad necesaria para ocupar la fortaleza
+    mov al, 9
+    sub al, byte[cantidadOficiales]
+    cmp byte[cantidadSoldados], al
+    jl ganadoresOficiales
 
+    ;Chequeo si la fortaleza esta completamente ocupada
+    mov rbx, -1
+    iterarPosicionesFortaleza:
+    inc rbx
+    cmp rbx, 9
+    je ganadoresSoldados
+    movzx rax, byte[posicionesFortaleza + rbx]
+    cmp byte[tablero + rax], '_'
+    jne iterarPosicionesFortaleza
+
+    ;-----------
+    ;Chequear si los oficiales no se pueden mover, ya que en ese caso los soldados ganan. Si se pueden mover, todavía no hay ningun ganador
+    ;-----------
+    
+    ningunGanador:
     mov byte[juegoTerminado], 'N'
+    jmp finActualizarEstadoJuego
+
+    ganadoresOficiales:
+    Strcpy ganador, oficiales
+    mov byte[juegoTerminado], 'S'
+    jmp finActualizarEstadoJuego
+
+    ganadoresSoldados:
+    Strcpy ganador, soldados
+    mov byte[juegoTerminado], 'S'
+
+    finActualizarEstadoJuego:
     ret

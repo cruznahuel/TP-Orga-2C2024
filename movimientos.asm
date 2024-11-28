@@ -83,27 +83,55 @@ calcularDesplazamiento:
 
 
 realizarMovimiento:
+
+    cmp byte[turnoJugador], 0
+    je moverJugador
+    
+    cmp byte[hayObligacionDeCapturar], 'S'
+    sete al
+    cmp byte[soldadoCaptura], 'S'
+    sete bl
+    and al, bl
+    cmp al, 1
+    je removerSoldadoCapturado
+
+    cmp byte[hayObligacionDeCapturar], 'S'
+    sete al
+    cmp byte[soldadoCaptura], 'N'
+    sete bl
+    and al, bl
+    cmp al, 1
+    je removerOficial
+
+    cmp byte[hayObligacionDeCapturar], 'N'
+    jmp moverJugador
+
+    removerOficial:
+    movzx rax, byte[posicionOrigen]
+    mov byte[tablero + rax], '_'
+    dec byte[cantidadOficiales]
+    jmp finMovimiento
+
+    removerSoldadoCapturado:
+    movzx rax, byte[posicionSoldadoCapturado]
+    mov byte[tablero + rax], '_'
+    dec byte[cantidadSoldados]
+
+    moverJugador:
     movzx rax, byte [filaOrigen]
     movzx rbx, byte [columnaOrigen]
     sub rsp, 8
     call calcularDesplazamiento
     add rsp, 8
-
-    lea r8, [tablero + rax]              
+    mov byte[tablero + rax], '_'
+                  
     movzx rax, byte [filaDestino]
     movzx rbx, byte [columnaDestino]
-
     sub rsp, 8
     call calcularDesplazamiento
     add rsp, 8
-    
-    lea r9, [tablero + rax]
+    mov bl, byte[caracter]
+    mov byte[tablero + rax], bl    
 
-    ; Colocar 'O' en la posición de destino
-    mov al, byte [caracter]              
-    mov byte [r9], al   
-
-    ; Liberar la posición de origen escribiendo '_'
-    mov byte [r8], '_'
-
+    finMovimiento:
     ret

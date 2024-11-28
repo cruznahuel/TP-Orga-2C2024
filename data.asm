@@ -20,6 +20,9 @@ section .data
     mensajeTurno                        db      "Turno de: %s",10,0
     strOficial                          db      "oficial",0
     strSoldado                          db      "soldado",0
+    cantidadOficiales                   db      2
+    cantidadSoldados                    db      24
+    posicionesFortaleza                 db      30,31,32,37,38,39,44,45,46
 
     ;Para la impresion del tablero
     e                                   db      "   ",0
@@ -34,8 +37,10 @@ section .data
     mensajeFilColFueraTablero           db      "La posicion es inválida, ingrese nuevamente.",0
     mensajeNoHayJugador                 db      "En la posicion elegida no hay un %s, ingrese nuevamente.",10,0
     mensajeErrorMovimiento              db      "El movimiento planteado es inválido, ingrese nuevamente.", 0
+    diffPosCercanas                     db      -8,-7,-6,-1,1,6,7,8
+    diffPosLejanas                      db      -16,-14,-12,-2,2,12,14,16
 
-
+                 
 
 
 
@@ -61,3 +66,18 @@ section .bss
     posicionDestino                     resb    1
     posicionOrigen                      resb    1
     diff                                resb    1
+    
+
+    haySoldadoCerca                     resb    1   ; S o N
+    sePuedeCapturar                     resb    1   ; S o N
+
+    diffPosicionesSoldadosCerca         resb    8   ;es un vector con los valores de las posiciones de los soldados cercanos al oficial
+    cantidadDeSoldadosCerca             resb    1
+    
+    posicionesDestinoParaCapturar       resb    8   ; si el soldado está completamente rodeado, puede pasar que tenga 8 posiciones disponibles para capturar a cualquier soldado
+    cantidadPosicionesDestinoParaCapturar resb 1
+
+    hayObligacionDeCapturar             resb    1   ; S o N
+    soldadoCaptura                      resb    1   ; S o N
+    posicionSoldadoCapturado            resb    1
+    
