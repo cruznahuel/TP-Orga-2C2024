@@ -103,19 +103,42 @@ realizarMovimiento:
     cmp al, 1
     je removerOficial
 
-    cmp byte[hayObligacionDeCapturar], 'N'
-    jmp moverJugador
+    jmp actualizarPosicionOficial
 
     removerOficial:
     movzx rax, byte[posicionOrigen]
     mov byte[tablero + rax], '_'
     dec byte[cantidadOficiales]
+    
+    ;Guardo qué numero de oficial se removió
+    mov al, byte[posicionOficial1]
+    cmp byte[posicionOrigen], al
+    je guardarNumeroOficial1Removido
+
+    mov byte[numeroOficialRemovido], 2
+    jmp finMovimiento
+
+    guardarNumeroOficial1Removido:
+    mov byte[numeroOficialRemovido], 1    
     jmp finMovimiento
 
     removerSoldadoCapturado:
     movzx rax, byte[posicionSoldadoCapturado]
     mov byte[tablero + rax], '_'
     dec byte[cantidadSoldados]
+
+    actualizarPosicionOficial:
+    mov al, byte[posicionDestino]
+    
+    mov bl, byte[posicionOficial1]
+    cmp byte[posicionOrigen], bl
+    je actualizarPosicionOficial1
+
+    mov byte[posicionOficial2],al
+    jmp moverJugador
+
+    actualizarPosicionOficial1:
+    mov byte[posicionOficial1], al
 
     moverJugador:
     movzx rax, byte [filaOrigen]

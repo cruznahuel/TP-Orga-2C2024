@@ -25,6 +25,8 @@ section .data
     cantidadOficiales                   db      2
     cantidadSoldados                    db      24
     posicionesFortaleza                 db      30,31,32,37,38,39,44,45,46
+    posicionOficial1                    db      44      ; es dinamico, arranca con este valor
+    posicionOficial2                    db      39      ; es dinamico, arranca con este valor
 
     ;Para la impresion del tablero
     e                                   db      "   ",0
@@ -44,7 +46,11 @@ section .data
 
     hayObligacionDeCapturar             db      'N'   ; S o N en ejecucion
     oficialCaptura                      db      'N'   ; S o N en ejecucion
+    oficialRemovido                     db      'N'   ; S o N en ejecucion
 
+    numeroOficialRemovido               db      0     ; luego toma el valor 1 o 2 cuando se capture un soldado. 1 para el que comienza a la izquierda, y 2 para el de la derecha
+    oficialesBloqueados                 db      'N'   ; se setea en S cuando los oficiales son acorralados
+    
     ;Comentario de la jugada
     comentario                          db      "Comentario jugada: %s",10,0
     mensajeSoldadoCapturado             db      "se capturó un soldado.",0
@@ -54,6 +60,7 @@ section .data
     mensajeFortalezaOcupada             db      "Motivo: La fortaleza fue ocupada completamente.",0
     mensajeOficialesRetirados           db      "Motivo: Los dos oficiales fueron retirados.",0
     mensajeSoldadosInsuficientes        db      "Motivo: Los soldados ya no pueden ocupar la fortaleza.",0
+    mensajeOficialesBloqueados          db      "Motivo: Los oficiales fueron bloqueados."
 
 section .bss
     fileHandle                          resq    1
@@ -86,6 +93,6 @@ section .bss
     cantidadPosicionesDestinoParaCapturar   resb 1
 
     posicionSoldadoCapturado            resb    1
-
+    
     comentarioJugadaStr                 resb    100
     motivoGanador                       resb    100

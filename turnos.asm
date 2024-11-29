@@ -41,10 +41,11 @@ realizarTurno:
     call realizarMovimiento
     add rsp, 8
 
-    mov byte[turnoJugador], r14b
     sub rsp, 8
     call actualizarEstadoJuego
     add rsp, 8
+
+    mov byte[turnoJugador], r14b
     ret
 
 actualizarEstadoJuego:
@@ -68,9 +69,13 @@ actualizarEstadoJuego:
     cmp byte[tablero + rax], '_'
     jne iterarPosicionesFortaleza
 
-    ;-----------
     ;Chequear si los oficiales no se pueden mover, ya que en ese caso los soldados ganan. Si se pueden mover, todavía no hay ningun ganador
-    ;-----------
+    sub rsp, 8
+    call chequearBloqueoOficiales
+    add rsp, 8
+
+    cmp byte[oficialesBloqueados], 'S'
+    je ganadoresSoldados
     
     ningunGanador:
     mov byte[juegoTerminado], 'N'
@@ -86,16 +91,103 @@ actualizarEstadoJuego:
     Strcpy ganador, soldados
     cmp byte[cantidadOficiales], 0
     je motivoOficialesRetirados
+    cmp byte[oficialesBloqueados], 'S'
+    je motivoOficialesBloqueados
     Strcpy motivoGanador, mensajeFortalezaOcupada
     n:
     mov byte[juegoTerminado], 'S'
     jmp finActualizarEstadoJuego
+
+    motivoOficialesBloqueados:
+    Strcpy motivoGanador, mensajeOficialesBloqueados
+    jmp n 
 
     motivoOficialesRetirados:
     Strcpy motivoGanador, mensajeOficialesRetirados
     jmp n
 
     finActualizarEstadoJuego:
+    ret
+
+
+chequearBloqueoOficiales:
+
+    cmp byte[numeroOficialRemovido], 0
+    je chequearBloqueoAmbosSoldados
+    
+    cmp byte[numeroOficialRemovido], 1
+    je chequearBloqueoOficial2
+    cmp byte[numeroOficialRemovido], 2
+    je chequearBloqueoOficial1
+
+    chequearBloqueoOficial2:
+    mov dil, byte[posicionOficial2]
+    sub rsp, 8
+    call chequearBloqueo
+    add rsp, 8
+    jmp finChequeoBloqueo
+
+    chequearBloqueoOficial1:
+    mov dil, byte[posicionOficial1]
+    sub rsp, 8
+    call chequearBloqueo
+    add rsp, 8
+    jmp finChequeoBloqueo
+
+    chequearBloqueoAmbosSoldados:
+    mov dil, byte[posicionOficial1]
+    sub rsp, 8
+    call chequearBloqueo
+    add rsp, 8
+    cmp byte[oficialesBloqueados], 'N'
+    je finChequeoBloqueo
+
+    mov dil, byte[posicionOficial2]
+    sub rsp, 8
+    call chequearBloqueo
+    add rsp, 8
+    
+    finChequeoBloqueo:
+    ret
+
+chequearBloqueo:
+    mov rbx, -1
+    i:
+    inc rbx
+    cmp rbx, 8
+    je chequearVacioEnPosicionesLejanasSoldado
+    movzx r10, dil
+    mov al, byte[diffPosCercanas + rbx]
+    cbw
+    cwde
+    cdqe
+    cmp byte[tablero + r10 + rax], '_'
+    je noHayBloqueo
+    jmp i
+
+    chequearVacioEnPosicionesLejanasSoldado:
+    mov rbx, -1
+    j:
+    inc rbx
+    cmp rbx, 8
+    je hayBloqueo  
+    movzx r10, dil
+    mov al, byte[diffPosLejanas + rbx]
+    cbw
+    cwde
+    cdqe
+    cmp byte[tablero + r10 + rax], '_'
+    je noHayBloqueo
+    jmp j
+
+    hayBloqueo:
+    mov byte[oficialesBloqueados], 'S'
+    jmp finChequeo
+
+    noHayBloqueo:
+    mov byte[oficialesBloqueados], 'N'
+
+    finChequeo:
     ret
 
 comentarioJugada:
