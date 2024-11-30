@@ -47,13 +47,13 @@ leerArchivoOficiales:
 
     Strcpy datosOficial1, buffer
 
-    mov rdi, 9
+    mov r12, 9
     Strcpy buffer, datosOficial1
     callAndAdjustStack obtenerValorOficialSegunIndice ;a partir de un string en el buffer y un indice, guarda en el acumulador el numero que se encontraba ahi.
     mov word[filaOficial1] , ax
 
 
-    mov rdi, 10
+    mov r12, 10
     Strcpy buffer, datosOficial1
 
     callAndAdjustStack obtenerValorOficialSegunIndice
@@ -68,14 +68,14 @@ leerArchivoOficiales:
     callAndAdjustStack fgets
 
 
-    mov rdi, 9
+    mov r12, 9
     Strcpy buffer, datosOficial2
 
     callAndAdjustStack obtenerValorOficialSegunIndice ;a partir de un string y un indice, guarda en el acumulador el numero que se encontraba ahi.
     mov word[filaOficial2] , ax
 
 
-    mov rdi, 10
+    mov r12, 10
     Strcpy buffer, datosOficial2
 
     callAndAdjustStack obtenerValorOficialSegunIndice
@@ -126,7 +126,9 @@ eliminar_salto:
 
 obtenerValorOficialSegunIndice:
     mov r15,0                  
-    mov r13,0                    
+    mov r13,0  
+    mov r14,0
+    xor rax,rax ; doy valor 0 al acumulador                 
     jmp recorrarHastaElIndice   
     recorrarHastaElIndice:     
         mov bl, [buffer+r13]          
@@ -140,12 +142,11 @@ obtenerValorOficialSegunIndice:
     esNuevoNumero:
         inc r13
         inc r14
-        cmp r14, rdi ;comparo en indice actual con el pasado por parametro
+        cmp r14, r12 ;comparo en indice actual con el pasado por parametro
         je procesarNumero
         jne recorrarHastaElIndice
 
     procesarNumero:
-        inc r13
         mov bl, [buffer+r13]
 
         cmp bl, ' '
@@ -163,6 +164,7 @@ obtenerValorOficialSegunIndice:
         sumarNumero:
             add ax, bx ; Sumar el dígito
             mov r15, 1 ; Marcar que ya no es el primer dígito
+            inc r13
             jmp procesarNumero
     fin:
         ret
