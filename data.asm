@@ -59,7 +59,8 @@ section .data
     columnaOficial2                     dw      0
     datosOficial1                       times 13 db 0; 11 para datos y 2 adicionales
     datosOficial2                       times 13 db 0 
-    buffer                              times 50 db 0      
+    buffer                              times 50 db 0
+    indice                               db      0      
 
 section .bss
     fileHandle                          resq    1
@@ -78,4 +79,3 @@ section .bss
     desplazamientoOrigen                resw    1
     desplazamientoDestino               resw    1
     caracter                            resb    1
-    index                               resb    1

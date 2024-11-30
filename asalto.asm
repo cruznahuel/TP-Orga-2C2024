@@ -143,7 +143,8 @@ lugarLibreValidoOficial:
 movimientoOficialValido:
     Puts mensajeMovimientoValido
 
-
+    callAndAdjustStack registrarDesplazamiento
+    
     mov byte [caracter], 'O'
 
     callAndAdjustStack realizarMovimiento

@@ -1,7 +1,10 @@
 determinarOficial:
-    cmp r12,[filaOficial1]
+    movzx r12, byte[filaOrigen]
+    movzx r13, byte[columnaOrigen]
+
+    cmp r12w, [filaOficial1]
     jne esOficial2
-    cmp r13,[columnaOficial1]
+    cmp r13w, [columnaOficial1]
     jne esOficial2
     je  esOficial1
 
@@ -14,17 +17,18 @@ esOficial2:
     ret
 
 cargarPosicionOficial:
+
     cmp byte[oficialSeleccionado],1
     je  cargarPosicionOficial1
     jne cargarPosicionOficial2
 
     cargarPosicionOficial1:
-        mov r14, filaOficial1
-        mov r15, columnaOficial1
+        movzx r14, byte[filaOficial1]
+        movzx r15, byte[columnaOficial1]
         ret
     cargarPosicionOficial2:
-        mov r14, filaOficial1
-        mov r15, columnaOficial1
+        movzx r14, byte[filaOficial1]
+        movzx r15, byte[columnaOficial1]
         ret
 
 
@@ -168,3 +172,62 @@ obtenerValorOficialSegunIndice:
             jmp procesarNumero
     fin:
         ret
+
+registrarDesplazamiento:
+    callAndAdjustStack cargarPosicionOficial
+
+    sub r14w, [filaDestino]
+    sub r15w, [columnaDestino]
+    callAndAdjustStack obtener_index
+    ret
+obtener_index:
+    mov byte[indice],0
+    cmp r14b,0
+    jl .sur                    ; Fila aumenta
+    jg .norte                  ; Fila disminuye
+    cmp r15b, 0
+    jl .este                   ; Columna aumenta
+    jg .oeste                  ; Columna disminuye
+
+    ; Caso: Sin movimiento
+    mov byte [indice], 8        ; Índice para `soldadosCapturados`
+    ret
+
+.norte:
+    cmp r15b, 0
+    jl .noreste
+    jg .noroeste
+    mov byte [indice], 1        ; Norte
+    ret
+
+
+.sur:
+    cmp r15b, 0
+    jl .sudeste
+    jg .sudoeste
+    mov byte [indice], 6        ; Sur
+    ret
+
+.este:
+    mov byte [indice], 4        ; Este
+    ret
+
+.oeste:
+    mov byte [indice], 3        ; Oeste
+    ret
+
+.noreste:
+    mov byte [indice], 2        ; Noreste
+    ret
+
+.noroeste:
+    mov byte [indice], 0        ; Noroeste
+    ret
+
+.sudeste:
+    mov byte [indice], 7        ; Sudeste
+    ret
+
+.sudoeste:
+    mov byte [indice], 5        ; Sudoeste
+    ret 
