@@ -66,7 +66,7 @@ leerArchivoOficiales:
     mov rdx, [fileHandleOficiales]
 
     callAndAdjustStack fgets
-
+    Strcpy datosOficial2, buffer
 
     mov r12, 9
     Strcpy buffer, datosOficial2
