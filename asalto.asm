@@ -1,7 +1,9 @@
 global main
+
 %include "imports.asm"
 %include "movimientos.asm"
 %include "validaciones.asm"
+%include "oficiales.asm"
 %include "tablero.asm"
 %include "data.asm"
 
@@ -14,6 +16,10 @@ main:
     
     callAndAdjustStack leerTablero        ; devuelve 0 si se pudo leer el archivo
  
+    cmp rax, 0
+    jne finPrograma
+
+    callAndAdjustStack leerArchivoOficiales ; devuelve 0 si se pudo leer el archivo
     cmp rax, 0
     jne finPrograma
 
@@ -104,6 +110,8 @@ turnoOficialValidar:
 oficialValido:
     Puts mensajeOficialValido
 
+    callAndAdjustStack determinarOficial
+
     mov r12, filaDestino      ; Se debería poder remover, ya definido en soldado
     mov r13, columnaDestino   ; Se debería poder remover, ya definido en soldado
     callAndAdjustStack ingresarDatos
@@ -134,6 +142,7 @@ lugarLibreValidoOficial:
 
 movimientoOficialValido:
     Puts mensajeMovimientoValido
+
 
     mov byte [caracter], 'O'
 

@@ -3,15 +3,21 @@ section .data
     tablero                 times 50    db      0                                           ;49 para los caracteres y 1 para el 0 que agrega fgets
     archivoTablero                      db      "tablero.txt",0
     archivoTableroGuardado              db      "tableroGuardado.txt",0
+    archivoOficiales                    db      "datosOficiales.txt",0
+    archivoOficialesGuardado            db      "datosOficialesGuardado.txt",0
     mensajeErrorLectura                 db      "Hubo un error al leer: %s",10,0
     modoLectura                         db      "r",0
+    modoEscritura                       db      "w",0
     mensajeCargarPartida                db      "Hay una partida guardada, ¿quiere reanudarla? S/N",10,0
     respuestaPositiva                   db      'S'
     respuestaNegativa                   db      'N'
     mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
     formatoChar                         db      "%c",0    
     formatoInputFilCol                  db      "%hi %hi", 0 ; Transformar los campos a nro entero (me sobra para guardar un nro entre 1 y 7)
-
+    formatoOficiales                    db      "%hi %hi %hi %hi %hi %hi %hi %hi %hi %hi %hi", 0
+    mensajeInformacionOficial           db      "noroeste:%hi,norte:%hi,noreste:%hi,oeste:%hi,este:%hi,sudeste:%hi,sur:%hi,sudeste:%hi,capturas:%hi,filaActual:%hi,columnaActual:%hi",10,0
+    mensajeOficial1                     db      "oficial1:",10,0
+    mensajeOficial2                     db      "oficial2:",10,0
 
     ;Para la impresion del tablero
     e                                   db      "   ",0
@@ -46,10 +52,20 @@ section .data
 
     turnoSoldado                        db      1
 
+    oficialSeleccionado                 db      1
+    filaOficial1                        dw      0
+    columnaOficial1                     dw      0
+    filaOficial2                        dw      0
+    columnaOficial2                     dw      0
+    datosOficial1                       times 13 db 0; 11 para datos y 2 adicionales
+    datosOficial2                       times 13 db 0 
+    buffer                              times 50 db 0      
 
 section .bss
     fileHandle                          resq    1
+    fileHandleOficiales                 resq    1
     archivoALeer                        resb    30
+    archivoOficialesALeer               resb    30
     inputStr                            resb    30
     inputChar                           resb    1
     inputFilCol                         resb    50 ; Defino un campo lo suficientemente grande para mitigar el riesgo de pisar memoria
@@ -62,3 +78,4 @@ section .bss
     desplazamientoOrigen                resw    1
     desplazamientoDestino               resw    1
     caracter                            resb    1
+    index                               resb    1

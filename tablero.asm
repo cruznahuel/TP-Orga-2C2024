@@ -1,6 +1,6 @@
 verificarTableroGuardado:                   ;devuelve el string archivoALeer con el valor "tablero.txt" o "tableroGuardado.txt"
-    Strcpy archivoALeer, archivoTablero
-
+    Strcpy archivoALeer, archivoTablero     ;HABRIA QUE CAMBIARLE EL NOMBRE A VERIFICAR PARTIDA GUARDADA
+    Strcpy archivoOficialesALeer, archivoOficiales
     mov rdi, archivoTableroGuardado
     mov rsi, modoLectura
     sub rsp, 8
@@ -48,6 +48,8 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
     jne inputInvalido
 
     Strcpy archivoALeer, archivoTableroGuardado
+    Strcpy archivoOficialesALeer,archivoOficialesGuardado
+
     jmp finVerificarTableroGuardado
 
     inputInvalido:
@@ -61,9 +63,7 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
 leerTablero:
     mov rdi, archivoALeer
     mov rsi, modoLectura
-    sub rsp, 8
-    call fopen
-    add rsp, 8
+    callAndAdjustStack fopen
 
     cmp rax, 0
     jle errorLecturaArchivo
@@ -73,29 +73,23 @@ leerTablero:
     mov rdi, tablero
     mov rsi, 50
     mov rdx, qword[fileHandle]
-    sub rsp, 8
-    call fgets
-    add rsp, 8
+    callAndAdjustStack fgets
 
     mov rax, 0
     jmp finLeerTablero
 
     errorLecturaArchivo:
-    mov rdi, mensajeErrorLectura
-    mov rsi, archivoALeer
-    sub rsp, 8
-    call printf
-    add rsp, 8
-    
-    mov rax, 1
+        mov rdi, mensajeErrorLectura
+        mov rsi, archivoALeer
+        callAndAdjustStack printf
+        
+        mov rax, 1
+        ret
 
     finLeerTablero:
-    mov rdi, qword[fileHandle]
-    sub rsp, 8
-    call fclose
-    add rsp, 8
-
-    ret
+        mov rdi, qword[fileHandle]
+        callAndAdjustStack fclose
+        ret
 
 
 imprimirTablero:
