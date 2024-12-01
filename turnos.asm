@@ -22,7 +22,8 @@ turnoOficiales:
     sub rsp, 8
     call realizarTurno
     add rsp, 8
-
+    callAndAdjustStack determinarOficial
+    callAndAdjustStack registrarDesplazamiento
     ret
 
 realizarTurno:

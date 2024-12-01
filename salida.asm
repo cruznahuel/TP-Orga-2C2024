@@ -62,6 +62,25 @@ menuSalida:
     jle errorGuardado
     cerrarArchivo qword[fileHandle]
 
+    ;Guardado oficiales
+    abrirArchivo archivoOficialesGuardado,modoEscritura
+    cmp rax,0
+    jle errorAberturaArchivo
+    mov qword[fileHandleOficiales], rax
+
+    Strcpy buffer,datosOficial1
+    callAndAdjustStack añadir_salto
+
+    mov rdi,buffer
+    mov rsi, [fileHandleOficiales]
+    callAndAdjustStack fputs
+
+    mov rdi,datosOficial2
+    mov rsi, [fileHandleOficiales]
+    callAndAdjustStack fputs
+
+    cerrarArchivo qword[fileHandleOficiales]
+    
     Puts mensajeGuardadoExitoso
     jmp terminarSalida
 

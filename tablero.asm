@@ -1,7 +1,9 @@
 verificarTableroGuardado:                   ;devuelve el string archivoALeer con el valor "tablero.txt" o "tableroGuardado.txt"
-    Strcpy archivoALeer, archivoTablero
+    Strcpy archivoALeer, archivoTablero     
+    Strcpy archivoOficialesALeer, archivoOficiales
 
     abrirArchivo archivoTableroGuardado, modoLectura
+    
     cmp rax, 0
     jle finVerificarTableroGuardado
 
@@ -40,6 +42,7 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
     jne inputInvalido
 
     Strcpy archivoALeer, archivoTableroGuardado
+    Strcpy archivoOficialesALeer,archivoOficialesGuardado
     mov byte[hayPartidaGuardada], 'S'
     jmp limpiarBuffer
 
@@ -107,9 +110,7 @@ leerTablero:
     mov rdi, tablero
     mov rsi, 50
     mov rdx, qword[fileHandle]
-    sub rsp, 8
-    call fgets
-    add rsp, 8
+    callAndAdjustStack fgets
 
     mov rax, 0
     jmp finLeerTablero
@@ -117,9 +118,7 @@ leerTablero:
     errorLecturaArchivo:
     mov rdi, mensajeErrorLectura
     mov rsi, archivoALeer
-    sub rsp, 8
-    call printf
-    add rsp, 8
+    callAndAdjustStack printf
     
     mov rax, 1
 

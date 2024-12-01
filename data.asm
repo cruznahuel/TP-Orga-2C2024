@@ -6,6 +6,8 @@ section .data
     tablero                 times 50    db      0                                           ;49 para los caracteres y 1 para el 0 que agrega fgets
     archivoTablero                      db      "tablero.txt",0
     archivoTableroGuardado              db      "tableroGuardado.txt",0
+    archivoOficiales                    db      "datosOficiales.txt",0
+    archivoOficialesGuardado            db      "datosOficialesGuardado.txt",0
     archivoTurno                        db      "turno.txt",0
     mensajeErrorLectura                 db      "Hubo un error al leer: %s",10,0
     modoLectura                         db      "r",0
@@ -37,7 +39,20 @@ section .data
     cantidadSoldados                    db      24
     posicionesFortaleza                 db      30,31,32,37,38,39,44,45,46
     posicionOficial1                    db      44      ; es dinamico, arranca con este valor
-    posicionOficial2                    db      39      ; es dinamico, arranca con este valor
+    posicionOficial2                    db      39      ; es dinamico, arranca con este valor   ESTO TENDRIA QUE CAMBIARLO POR LOS DATOS QUE TENGO YO
+
+    ;para la impresion de  datos de oficiales
+    mensajeNoroeste                     db      "noroeste:%hd,",0
+    mensajeNorte                        db      "norte:%hd,",0
+    mensajeNoreste                      db      "noreste:%hd,",0
+    mensajeOeste                        db      "oeste:%hd,",0
+    mensajeEste                         db      "este:%hd,",0
+    mensajeSudoeste                     db      "sudoeste:%hd,",0
+    mensajeSur                          db      "sur:%hd,",0
+    mensajeSudeste                      db      "sudeste:%hd,",0
+    mensajeCapturas                     db      "capturas:%hd",10,0
+    mensajeOficial1                     db      "oficial1:",0
+    mensajeOficial2                     db      "oficial2:",0
 
     ;Para la impresion del tablero
     e                                   db      "   ",0
@@ -73,9 +88,22 @@ section .data
     mensajeSoldadosInsuficientes        db      "Motivo: Los soldados ya no pueden ocupar la fortaleza.",0
     mensajeOficialesBloqueados          db      "Motivo: Los oficiales fueron bloqueados."
 
+    oficialSeleccionado                 db      1
+    filaOficial1                        dw      0
+    columnaOficial1                     dw      0
+    filaOficial2                        dw      0
+    columnaOficial2                     dw      0
+    datosOficial1                       times 26 db 0; 22 para datos(pueden ser de 1 o 2 caracteres cada uno) y 4 adicionales
+    datosOficial2                       times 26 db 0 
+    buffer                              times 50 db 0
+    indice                              db      0   
+    datosOficialActual                  dw      0 
+
 section .bss
     fileHandle                          resq    1
+    fileHandleOficiales                 resq    1
     archivoALeer                        resb    30
+    archivoOficialesALeer               resb    30
     eleccionSalida                      resb    1
     inputStr                            resb    30
     inputChar                           resb    1

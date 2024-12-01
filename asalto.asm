@@ -2,6 +2,7 @@ global main
 %include "imports.asm"
 %include "movimientos.asm"
 %include "validaciones.asm"
+%include "oficiales.asm"
 %include "tablero.asm"
 %include "turnos.asm"
 %include "salida.asm"
@@ -16,13 +17,13 @@ main:
     Puts reglasSoldados
     Puts reglasOficiales
 
-    sub rsp, 8
-    call verificarTableroGuardado
-    add rsp, 8
+    callAndAdjustStack verificarTableroGuardado
 
-    sub rsp, 8
-    call leerTablero        ; devuelve 0 si se pudo leer el archivo
-    add rsp, 8
+    callAndAdjustStack leerTablero        ; devuelve 0 si se pudo leer el archivo
+    cmp rax, 0
+    jne finPrograma
+
+    callAndAdjustStack leerArchivoOficiales ; devuelve 0 si se pudo leer el archivo
     cmp rax, 0
     jne finPrograma
 
@@ -78,13 +79,21 @@ main:
 
 
     mensajeGanador:
-    mov rdi, mensajeDelGanador
-    mov rsi, ganador
-    sub rsp, 8
-    call printf
-    add rsp, 8
+        mov rdi, mensajeDelGanador
+        mov rsi, ganador
+        sub rsp, 8
+        call printf
+        add rsp, 8
+        Puts motivoGanador
 
-    Puts motivoGanador
+    mensajeDatosOficiales:
+        Puts mensajeOficial1
+        Strcpy datosOficialActual,datosOficial1
+        callAndAdjustStack imprimirDatosOficiales
 
+        Puts mensajeOficial2
+        Strcpy datosOficialActual, datosOficial2
+        callAndAdjustStack imprimirDatosOficiales
+    
     finPrograma:
     ret

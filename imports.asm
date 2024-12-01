@@ -6,7 +6,6 @@ extern printf
 extern scanf
 extern sscanf
 extern sprintf
-
 extern fopen
 extern fclose
 extern fputs
@@ -105,8 +104,8 @@ extern getchar
     add rsp, 8
 %endmacro
 
-;%macro callAndAdjustStack 1
-;    sub rsp, 8
-;    call %1
-;    add rsp, 8
-;%endmacro
+%macro callAndAdjustStack 1
+    sub rsp, 8
+    call %1
+    add rsp, 8
+%endmacro
