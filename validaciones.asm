@@ -39,18 +39,51 @@ validarLugar:
     mov cl, byte[tablero + rax]
     cmp cl, byte[caracter]
     jne lugarInvalido
-
-    cmp rax, 28
-    je lugarValido
-    cmp rax, 29
-    je lugarValido
-    cmp rax, 33
-    je lugarValido
-    cmp rax, 34
-    je lugarValido
     
     cmp cl, 'X'
     jne lugarValido
+
+    verificarEncierroCostados: 
+        cmp rax, 28
+        je verificarLugarLibreDerecha
+
+        cmp rax, 29
+        je verificarLugarLibreCostados
+
+        cmp rax, 33 
+        je verificarLugarLibreCostados
+
+        cmp rax, 34
+        je verificarLugarLibreIzquierda
+
+
+        verificarLugarLibreDerecha:
+            add rax, 1
+            mov cl, byte[tablero + rax]     
+            cmp cl, '_'
+            je lugarValido
+            
+            jmp soldadoEncerrado
+
+        verificarLugarLibreIzquierda:
+            sub rax, 1
+            mov cl, byte[tablero + rax]     
+            cmp cl, '_'
+            je lugarValido
+
+            jmp soldadoEncerrado
+
+        verificarLugarLibreCostados:
+            sub rax, 1
+            mov cl, byte[tablero + rax]     
+            cmp cl, '_'
+            je lugarValido
+
+            add rax, 2
+            mov cl, byte[tablero + rax]     
+            cmp cl, '_'
+            je lugarValido
+            jmp soldadoEncerrado
 
     movzx rbx, byte[inputFila]
     inc rbx
@@ -58,10 +91,18 @@ validarLugar:
     jg soldadoEncerrado
 
     imul rbx, 7
-    add bl, byte[inputColumna]
-    mov cl, byte[tablero + rbx]
-    cmp cl, '_'
-    jne soldadoEncerrado
+    add bl, byte[inputColumna - 1]
+    mov cx, 2
+
+    verificarEncierro:
+    mov cl, byte[tablero + rbx]     
+    cmp cl, '_'                      
+    je lugarValido                   
+
+    add bl, 1                        
+    loop verificarEncierro         
+
+    jmp soldadoEncerrado
 
     lugarValido:
     mov rax, 0
@@ -186,11 +227,8 @@ validarPosicionDestinoOficial:
     call guardarPosiblesPosicionesParaCapturar
     add rsp,8
 
-    finVerificacionDePosiblesCapturas:
-    cmp byte[cantidadPosicionesDestinoParaCapturar], 0
+    cmp byte[hayObligacionDeCapturar], 'N'
     je noHayObligacionDeCapturar
-
-    mov byte[hayObligacionDeCapturar], 'S'
 
     sub rsp, 8
     call verificarDesentendimientoOficial

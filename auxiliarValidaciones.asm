@@ -67,7 +67,11 @@ guardarPosiblesPosicionesParaCapturar:
     inc byte[cantidadPosicionesDestinoParaCapturar]
     jmp recorrerDiffPosicionesSoldadosCercanos
 
+    finVerificacionDePosiblesCapturas:
+    cmp byte[cantidadPosicionesDestinoParaCapturar], 0
+    je noHayObligacionDeCapturar
     ret
+
 
 verificarDesentendimientoOficial: 
     mov rbx, 0
