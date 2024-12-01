@@ -34,6 +34,9 @@ section .data
     formatoIndiceChar                   db      " %c ",0
     nuevaLinea                          db      "",0
 
+    ;para la escritura de archivos
+    saltoDeLinea                        db      10
+
 
     prueba                              db      "prueba",0
 

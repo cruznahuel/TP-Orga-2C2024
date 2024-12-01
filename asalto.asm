@@ -165,6 +165,7 @@ finPrograma:
     Strcpy datosOficialActual, datosOficial2
     callAndAdjustStack imprimirDatosOficiales
 
+    callAndAdjustStack actualizarArchivoOficiales ;asi se actualiza el archivo de oficiales
     ret
 
 

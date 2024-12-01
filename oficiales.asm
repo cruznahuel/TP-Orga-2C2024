@@ -117,8 +117,7 @@ eliminar_salto:
         jmp contar_caracteres   ; Repetir para el siguiente carácter
 
     fin_calculo_longitud:
-    ; RCX ahora contiene la longitud de la cadena en el buffer
-    ; Puedes usar RCX como longitud_buffer
+
     dec rcx 
     buscar_salto:
     cmp byte [rsi + rcx], 10 ; Comparar con '\n'
@@ -127,6 +126,23 @@ eliminar_salto:
     fin_eliminar_salto:
         ret
 
+añadir_salto:
+    xor rcx, rcx           ; Inicializar contador en 0
+    mov rsi, buffer        ; RSI apunta al inicio del buffer
+
+    contar_caracteres_añadir: ;A ESTO LE TENGO QUE CAMBIAR EL NOMBRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        cmp byte [rsi + rcx], 0 ; verifico si es '\0'
+        je fin_calculo_longitud_añadir ; Si lo es, terminar
+        inc rcx                 ; Incrementar el contador
+        jmp contar_caracteres_añadir   ; Repetir para el siguiente carácter
+
+    fin_calculo_longitud_añadir:
+
+    mov byte [rsi + rcx], 10  ; Reemplazar '\0' con '\n'
+    inc rcx
+    mov byte [rsi + rcx], 0  ; agrego '\0'
+    fin_añadir_salto:
+        ret
 
 
 obtenerValorOficialSegunIndice:
@@ -411,3 +427,38 @@ imprimirDatosOficiales:
     callAndAdjustStack printf
 
     ret
+
+
+actualizarArchivoOficiales:
+    mov rdi, archivoOficialesGuardado
+    mov rsi, modoEscritura
+
+    callAndAdjustStack fopen
+    cmp rax,0
+    je errorLecturaArchivoOficialesGuardao
+
+    mov qword[fileHandleOficiales], rax
+
+    Strcpy buffer,datosOficial1
+    callAndAdjustStack añadir_salto
+
+    mov rdi,buffer
+    mov rsi, [fileHandleOficiales]
+    callAndAdjustStack fputs
+
+    mov rdi,datosOficial2
+    mov rsi, [fileHandleOficiales]
+    callAndAdjustStack fputs
+
+    jmp finEscribirOficiales
+
+    errorLecturaArchivoOficialesGuardao:
+        mov rdi, mensajeErrorLectura
+        mov rsi, archivoOficialesGuardado
+        callAndAdjustStack printf
+        mov rax,1
+    
+    finEscribirOficiales:
+        mov rdi, qword[fileHandleOficiales]
+        callAndAdjustStack fclose
+        ret
