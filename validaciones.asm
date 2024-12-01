@@ -44,47 +44,18 @@ validarLugar:
     jne lugarValido
 
     verificarEncierroCostados: 
-        cmp rax, 28
-        je verificarLugarLibreDerecha
+    cmp rax, 28
+    je verificarLugarLibreDerecha
 
-        cmp rax, 29
-        je verificarLugarLibreCostados
+    cmp rax, 29
+    je verificarLugarLibreCostados
 
-        cmp rax, 33 
-        je verificarLugarLibreCostados
+    cmp rax, 33 
+    je verificarLugarLibreCostados
 
-        cmp rax, 34
-        je verificarLugarLibreIzquierda
-
-
-        verificarLugarLibreDerecha:
-            add rax, 1
-            mov cl, byte[tablero + rax]     
-            cmp cl, '_'
-            je lugarValido
-            
-            jmp soldadoEncerrado
-
-        verificarLugarLibreIzquierda:
-            sub rax, 1
-            mov cl, byte[tablero + rax]     
-            cmp cl, '_'
-            je lugarValido
-
-            jmp soldadoEncerrado
-
-        verificarLugarLibreCostados:
-            sub rax, 1
-            mov cl, byte[tablero + rax]     
-            cmp cl, '_'
-            je lugarValido
-
-            add rax, 2
-            mov cl, byte[tablero + rax]     
-            cmp cl, '_'
-            je lugarValido
-            jmp soldadoEncerrado
-
+    cmp rax, 34
+    je verificarLugarLibreIzquierda
+    
     movzx rbx, byte[inputFila]
     inc rbx
     cmp rbx, 6
@@ -102,6 +73,34 @@ validarLugar:
     add bl, 1                        
     loop verificarEncierro         
 
+    jmp soldadoEncerrado
+
+    verificarLugarLibreDerecha:
+    add rax, 1
+    mov cl, byte[tablero + rax]     
+    cmp cl, '_'
+    je lugarValido
+    
+    jmp soldadoEncerrado
+
+    verificarLugarLibreIzquierda:
+    sub rax, 1
+    mov cl, byte[tablero + rax]     
+    cmp cl, '_'
+    je lugarValido
+
+    jmp soldadoEncerrado
+
+    verificarLugarLibreCostados:
+    sub rax, 1
+    mov cl, byte[tablero + rax]     
+    cmp cl, '_'
+    je lugarValido
+
+    add rax, 2
+    mov cl, byte[tablero + rax]     
+    cmp cl, '_'
+    je lugarValido
     jmp soldadoEncerrado
 
     lugarValido:
