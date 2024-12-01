@@ -38,7 +38,9 @@ section .data
     posicionesFortaleza                 db      30,31,32,37,38,39,44,45,46
     posicionOficial1                    db      44      ; es dinamico, arranca con este valor
     posicionOficial2                    db      39      ; es dinamico, arranca con este valor
-
+    mensajeSoldadoEncerrado             db      "El soldado no puede moverse, ingrese nuevamente.",0
+    mensajeOficialEncerrado             db      "El oficial está encerrado y no puede moverse, ingrese nuevamente.", 0
+    
     ;Para la impresion del tablero
     e                                   db      "   ",0
     formatoIndiceInt                    db      " %i ",0

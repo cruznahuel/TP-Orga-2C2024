@@ -46,6 +46,163 @@ validarLugar:
     mov rax, 1
     ret
 
+verificarBloqueoSoldado:
+    movzx rax, byte[posicionOrigen]
+    cmp rax, 44
+    jge hayBloqueoSoldado
+    cmp rax, 28
+    je verificarLugarLibreDerecha
+    cmp rax, 29
+    je verificarLugarLibreCostados
+    cmp rax, 33 
+    je verificarLugarLibreCostados
+    cmp rax, 34
+    je verificarLugarLibreIzquierda
+    cmp rax, 2
+    sete r8b
+    cmp rax, 14
+    sete r9b
+    cmp rax, 21
+    sete r10b 
+    cmp rax, 37
+    sete r11b
+    or r8b, r9b
+    or r8b, r10b
+    or r8b, r11b
+    cmp r8b, 1
+    je verificarAbajoYDiagonalDerecha
+    cmp rax, 4
+    sete r8b
+    cmp rax, 20
+    sete r9b
+    cmp rax, 27
+    sete r10b 
+    cmp rax, 39
+    sete r11b
+    or r8b, r9b
+    or r8b, r10b
+    or r8b, r11b
+    cmp r8b, 1
+    je verificarAbajoYDiagonalIzquierda
+
+    jmp verificarAbajoYDiagonales
+
+    verificarLugarLibreDerecha:
+        add rax, 1
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        jmp hayBloqueoSoldado
+    verificarLugarLibreIzquierda:
+        sub rax, 1
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        jmp hayBloqueoSoldado
+    verificarLugarLibreCostados:
+        sub rax, 1
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        add rax, 2
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        jmp hayBloqueoSoldado
+    verificarAbajoYDiagonalDerecha:
+        add rax, 7
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        add rax, 1
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        jmp hayBloqueoSoldado
+    verificarAbajoYDiagonalIzquierda:
+        add rax, 7
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        sub rax, 1
+        cmp byte[tablero + rax], '_'
+        je noHayBloqueoSoldado
+        jmp hayBloqueoSoldado
+    
+    verificarAbajoYDiagonales:
+    movzx rax, byte[posicionOrigen]
+    add rax, 5
+    verificarEncierro:
+    inc rax
+    cmp rax, 9
+    je hayBloqueoSoldado
+    cmp byte[tablero + rax], '_'
+    je noHayBloqueoSoldado
+    jmp verificarEncierro
+
+    hayBloqueoSoldado:
+    mov rax, 1
+    ret
+
+    noHayBloqueoSoldado:
+    mov rax, 0
+    ret
+
+
+verificarBloqueoOficial:
+
+    mov dil, byte[posicionOrigen]
+    sub rsp, 8
+    call chequearBloqueo
+    add rsp, 8
+
+    cmp byte[oficialesBloqueados], 'N'
+    je noHayBloqueoOficial
+
+    hayBloqueoOficial:
+    mov rax, 1
+    ret
+
+    noHayBloqueoOficial:
+    mov rax, 0
+    ret
+
+
+verificarBloqueo:
+    movzx rax, byte[inputFila]
+    movzx rbx, byte[inputColumna]
+    sub rsp, 8
+    call calcularDesplazamiento
+    add rsp, 8
+    mov byte[posicionOrigen], al
+
+    cmp byte[turnoJugador], 2
+    je verificarEncierroOficial
+
+    sub rsp, 8
+    call verificarBloqueoSoldado
+    add rsp, 8
+    cmp rax, 0
+    je noHayBloqueoJugador
+    jmp hayBloqueoJugador
+
+    verificarEncierroOficial:
+    sub rsp, 8
+    call verificarBloqueoOficial
+    add rsp, 8
+    cmp rax, 0
+    je noHayBloqueoJugador
+
+    hayBloqueoJugador:
+    cmp byte[turnoJugador], 1
+    je soldadoEncerrado
+    
+    Puts mensajeOficialEncerrado
+    jmp h 
+    soldadoEncerrado:
+    Puts mensajeSoldadoEncerrado
+    h:
+    mov rax, 1
+    ret
+
+    noHayBloqueoJugador:
+    mov rax, 0
+    ret
+
+
 validarPosicionDestinoSoldado:
     mov byte[hayObligacionDeCapturar], 'N'
     
