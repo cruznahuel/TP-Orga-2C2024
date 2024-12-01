@@ -27,6 +27,8 @@ section .data
     posicionesFortaleza                 db      30,31,32,37,38,39,44,45,46
     posicionOficial1                    db      44      ; es dinamico, arranca con este valor
     posicionOficial2                    db      39      ; es dinamico, arranca con este valor
+    mensajeSoldadoEncerrado             db      "El soldado está encerrado y no puede moverse. Ingrese nuevamente.", 0
+
 
     ;Para la impresion del tablero
     e                                   db      "   ",0
@@ -56,6 +58,7 @@ section .data
     mensajeSoldadoCapturado             db      "se capturó un soldado.",0
     mensajeOficialRetirado              db      "el oficial no capturó y fue retirado.",0
     mensajeVacio                        db      "",0
+    
     ;Motivos de la victoria
     mensajeFortalezaOcupada             db      "Motivo: La fortaleza fue ocupada completamente.",0
     mensajeOficialesRetirados           db      "Motivo: Los dos oficiales fueron retirados.",0

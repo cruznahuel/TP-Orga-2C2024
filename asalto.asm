@@ -2,6 +2,7 @@ global main
 %include "imports.asm"
 %include "movimientos.asm"
 %include "validaciones.asm"
+%include "auxiliarValidaciones.asm"
 %include "tablero.asm"
 %include "turnos.asm"
 %include "data.asm"

@@ -33,6 +33,9 @@ pedirPosicionOrigen:
     cmp rax, 0
     je finPedirPosicionOrigen
 
+    cmp rax, 2
+    je pedirPosOrigen
+
     Printf2 mensajeNoHayJugador, nombreJugador
     jmp pedirPosOrigen
 

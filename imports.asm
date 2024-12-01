@@ -69,6 +69,7 @@ extern toupper
     call system
     add rsp, 8
 %endmacro
+
 ;%macro callAndAdjustStack 1
 ;    sub rsp, 8
 ;    call %1

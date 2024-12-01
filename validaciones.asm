@@ -29,22 +29,53 @@ validarFilCol:
 validarLugar:
     xor rax, rax
     xor rbx, rbx
-    mov al, byte[inputFila]               
-    imul rax, 7                
-    mov bl, byte[inputColumna]                 
-    add rax, rbx                
+    mov al, byte[inputFila]
+    mov bl, byte[inputColumna]
+    
+    sub rsp, 8
+    call calcularDesplazamiento
+    add rsp, 8
 
     mov cl, byte[tablero + rax]
+    cmp cl, byte[caracter]
+    jne lugarInvalido
 
-    cmp cl, byte[caracter]               
-    jne lugarInvalido           
+    cmp rax, 28
+    je lugarValido
+    cmp rax, 29
+    je lugarValido
+    cmp rax, 33
+    je lugarValido
+    cmp rax, 34
+    je lugarValido
+    
+    cmp cl, 'X'
+    jne lugarValido
 
-    mov rax, 0                  
+    movzx rbx, byte[inputFila]
+    inc rbx
+    cmp rbx, 6
+    jg soldadoEncerrado
+
+    imul rbx, 7
+    add bl, byte[inputColumna]
+    mov cl, byte[tablero + rbx]
+    cmp cl, '_'
+    jne soldadoEncerrado
+
+    lugarValido:
+    mov rax, 0
+    ret
+
+    soldadoEncerrado:
+    Puts mensajeSoldadoEncerrado
+    mov rax, 2
     ret
 
     lugarInvalido:
     mov rax, 1
     ret
+
 
 validarPosicionDestinoSoldado:
     mov byte[hayObligacionDeCapturar], 'N'
@@ -56,17 +87,9 @@ validarPosicionDestinoSoldado:
     cmp rax, 1
     je movimientoInvalidoSoldado
 
-    movzx rax, byte[inputFila]
-    movzx rbx, byte[inputColumna]
     sub rsp, 8
-    call calcularDesplazamiento
-    add rsp, 8
-    mov byte[posicionDestino], al
-    
-    mov al, byte[posicionDestino]
-    mov bl, byte[posicionOrigen]
-    sub al, bl
-    mov byte[diff], al
+    call calcularDistanciaOrigenDestino
+    add rsp,8
 
     ;Chequeo si el soldado está en las columnas 0 y 6 y quiere ir a una posicion que, en el tablero, es contigua en memoria, lo cual no debe suceder.
     cmp byte[inputColumna], 0
@@ -151,139 +174,27 @@ validarPosicionDestinoOficial:
     cmp rax, 1
     je movimientoInvalidoOficial
 
-    movzx rax, byte[inputFila]
-    movzx rbx, byte[inputColumna]
     sub rsp, 8
-    call calcularDesplazamiento
-    add rsp, 8
-    mov byte[posicionDestino], al
+    call calcularDistanciaOrigenDestino
+    add rsp,8
 
-    mov al, byte[posicionDestino]
-    mov bl, byte[posicionOrigen]
-    sub al, bl
-    mov byte[diff], al
+    sub rsp, 8
+    call hallarSoldadosCercanos
+    add rsp,8
 
-    ;Recorro las posiciones cercanas al oficial y guardo las posiciones donde haya soldados
-    mov rbx, 0
-    mov byte[cantidadDeSoldadosCerca], 0
-    recorrerDiffPosCercanas:
-    cmp rbx, 8
-    je verificarCapturaSoldadosCercanos
-    mov al, byte[diffPosCercanas + rbx]
-    cbw
-    cwde
-    cdqe
-    movzx r10, byte[posicionOrigen]
-    cmp byte[tablero + r10 + rax], 'X'
-    je agregarDiffPosicionSoldadoCercana
-    inc rbx
-    jmp recorrerDiffPosCercanas
-
-    agregarDiffPosicionSoldadoCercana:
-    movzx r10, byte[cantidadDeSoldadosCerca]
-    mov byte[diffPosicionesSoldadosCerca + r10], al
-    inc rbx
-    inc byte[cantidadDeSoldadosCerca]
-    jmp recorrerDiffPosCercanas
-
-    ;Para los soldados cercanos, verifico que se puedan capturar, y guardo las posiciones destino que debería hacer el oficial para no ser removido
-    verificarCapturaSoldadosCercanos:
-    mov rbx, 0
-    mov byte[cantidadPosicionesDestinoParaCapturar], 0
-    recorrerDiffPosicionesSoldadosCercanos:
-    movzx r10, byte[cantidadDeSoldadosCerca]
-    cmp rbx, r10
-    je finVerificacionDePosiblesCapturas
-    mov al, byte[diffPosicionesSoldadosCerca + rbx]
-    cbw
-    cwde
-    cdqe
-    imul rax, 2
-    movzx r10, byte[posicionOrigen]
-    cmp byte[tablero + r10 + rax], '_'
-    je agregarPosicionesDestinoParaCapturar
-    inc rbx
-    jmp recorrerDiffPosicionesSoldadosCercanos
-    
-
-    agregarPosicionesDestinoParaCapturar:
-    add r10, rax
-    movzx r11, byte[cantidadPosicionesDestinoParaCapturar]
-    mov byte[posicionesDestinoParaCapturar + r11], r10b
-    inc rbx
-    inc byte[cantidadPosicionesDestinoParaCapturar]
-    jmp recorrerDiffPosicionesSoldadosCercanos
-
+    sub rsp, 8
+    call guardarPosiblesPosicionesParaCapturar
+    add rsp,8
 
     finVerificacionDePosiblesCapturas:
     cmp byte[cantidadPosicionesDestinoParaCapturar], 0
     je noHayObligacionDeCapturar
 
-    ;-----------------------------------------------
     mov byte[hayObligacionDeCapturar], 'S'
 
-    mov rbx, 0
-    verificarSiElMovimientoElegidoEsCercano:
-    cmp rbx, 8
-    je verificarSiElMovimientoElegidoEsLejano
-    mov al, byte[diff]
-    cmp byte[diffPosCercanas + rbx], al
-    je soldadoEligeNoCapturar
-    inc rbx
-    jmp verificarSiElMovimientoElegidoEsCercano
-
-    soldadoEligeNoCapturar:
-    mov byte[oficialCaptura], 'N'
-    jmp movimientoValidoOficial
-
-
-    verificarSiElMovimientoElegidoEsLejano:
-    mov rbx, -1
-    iterarDiffPosicionesLejanas:
-    inc rbx
-    cmp rbx, 8
-    je movimientoInvalidoOficial
-    mov al, byte[diff]
-    cmp byte[diffPosLejanas + rbx], al
-    jne iterarDiffPosicionesLejanas
-
-    ;Si llego acá, es porque hay obligacion de capturar y posicionDestino debe coincidir con uno del array de las posiciones posibles para capturar
-    mov al, byte[posicionDestino]
-    mov rbx, -1
-    iterarDiffPosicionesLejanasParaVerificarCaptura:
-    inc rbx
-    movzx r10, byte[cantidadPosicionesDestinoParaCapturar]
-    cmp rbx, r10 
-    je movimientoInvalidoOficial
-    cmp byte[posicionesDestinoParaCapturar + rbx], al
-    jne iterarDiffPosicionesLejanasParaVerificarCaptura
-
-    mov byte[oficialCaptura], 'S'
-    ;Necesito guardar la posicion del soldado capturado
-    mov al, byte[diff]
-    cbw
-    mov bl, 2
-    idiv bl     ;-> cociente en al
-    mov cl, byte[posicionOrigen]
-    add cl, al
-    mov byte[posicionSoldadoCapturado], cl
-    
-    jmp movimientoValidoOficial
-
-    ;--------------------------------------------------
-    ;A este punto tengo el array de posicionesDestinoParaCapturar en donde posicionDestino debe ser igual a alguno de los elementos, para que el oficial no sea removido
-    noHayObligacionDeCapturar:
-    mov byte[hayObligacionDeCapturar], 'N'
-
-    mov rbx, 0
-    verificarQueElMovimientoSeaCercano:
-    cmp rbx, 8
-    je movimientoInvalidoOficial
-    mov al, byte[diff]
-    cmp byte[diffPosCercanas + rbx], al
-    je movimientoValidoOficial
-    inc rbx
-    jmp verificarQueElMovimientoSeaCercano
+    sub rsp, 8
+    call verificarDesentendimientoOficial
+    add rsp,8
 
     movimientoValidoOficial:
     mov rax, 0
