@@ -151,7 +151,6 @@ movimientoOficialValido:
 
     callAndAdjustStack imprimirTablero
 
-    jmp finPrograma
     callAndAdjustStack siguienteTurno
 
     ret
