@@ -53,6 +53,8 @@ section .data
     mensajeCapturas                     db      "capturas:%hd",10,0
     mensajeOficial1                     db      "oficial1:",0
     mensajeOficial2                     db      "oficial2:",0
+    mensajeSoldadoEncerrado             db      "El soldado no puede moverse, ingrese nuevamente.",0
+    mensajeOficialEncerrado             db      "El oficial está encerrado y no puede moverse, ingrese nuevamente.", 0
 
     ;Para la impresion del tablero
     e                                   db      "   ",0

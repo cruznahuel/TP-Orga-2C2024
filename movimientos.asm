@@ -54,12 +54,18 @@ pedirPosicionOrigen:
     call validarLugar
     add rsp, 8
     cmp rax, 0
-    je finPedirPosicionOrigen
+    je verificarBloqueoEtiqueta
 
     Printf2 mensajeNoHayJugador, nombreJugador
     jmp pedirPosOrigen
 
-    finPedirPosicionOrigen:
+    verificarBloqueoEtiqueta:
+    sub rsp, 8
+    call verificarBloqueo
+    add rsp, 8
+    cmp rax, 1
+    je pedirPosOrigen
+
     mov al, byte[inputFila]
     mov byte[filaOrigen], al
     mov al, byte[inputColumna]
