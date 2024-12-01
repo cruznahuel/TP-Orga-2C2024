@@ -124,12 +124,12 @@ verificarBloqueoSoldado:
     
     verificarAbajoYDiagonales:
     movzx rax, byte[posicionOrigen]
-    add rax, 5
+    mov rbx, 5
     verificarEncierro:
-    inc rax
-    cmp rax, 9
+    inc rbx
+    cmp rbx, 9
     je hayBloqueoSoldado
-    cmp byte[tablero + rax], '_'
+    cmp byte[tablero + rax + rbx], '_'
     je noHayBloqueoSoldado
     jmp verificarEncierro
 
@@ -225,60 +225,37 @@ validarPosicionDestinoSoldado:
     sub al, bl
     mov byte[diff], al
 
-    ;Chequeo si el soldado está en las columnas 0 y 6 y quiere ir a una posicion que, en el tablero, es contigua en memoria, lo cual no debe suceder.
-    cmp byte[inputColumna], 0
-    sete al
-    cmp byte[diff], -1
-    sete bl
-    and al, bl
-    cmp al, 1
-    je movimientoInvalidoSoldado
-
-    cmp byte[inputColumna], 6
-    sete al
-    cmp byte[diff], 1
-    sete bl
-    and al, bl
-    cmp al, 1
-    je movimientoInvalidoSoldado
-
-    ;Chequeo si el soldado esta en las posiciones en rojo, donde solo se pueden mover horizontalmente.
-    ;-Primero las posiciones 28 y 29, que son de la izquierda
-    ;verificarConPosicion28y29:
+    ;Verifico en las posiciones en rojo
     cmp byte[posicionOrigen], 28
-    sete al
-    cmp byte[posicionOrigen], 29
-    sete bl
-    or al, bl
-    cmp al, 0
-    je verificarConPosicion33y34
-    cmp byte[diff], 1
-    sete cl
-    cmp byte[diff], -1          ;el soldado de la posicion 28 no puede hacer este movimiento, ya que lo filtré anteriormente, pero lo dejo solo para el caso de la posicion 29, para que se pueda mover a la izquierda
-    sete dl 
-    or cl, dl
-    cmp cl, 0
+    jne ver34
+    cmp byte[diff], -1
     je movimientoInvalidoSoldado
-    jne movimientoValidoSoldado
+    jmp movimientoValidoSoldado
 
-    ;-Ahora para las posiciones 33 y 34
-    verificarConPosicion33y34:
-    cmp byte[posicionOrigen], 33
-    sete al
+    ver34:
     cmp byte[posicionOrigen], 34
+    jne ver29y33
+    cmp byte[diff], 1
+    je movimientoInvalidoSoldado
+    jmp movimientoValidoSoldado
+
+    ver29y33:
+    cmp byte[posicionOrigen], 29
+    sete al
+    cmp byte[posicionOrigen], 33
     sete bl
     or al, bl
     cmp al, 0
     je verificarParaElRestoDePosicionesSoldado
-    cmp byte[diff], 1       ;el soldado de la posicion 34 no puede hacer este movimiento, ya que lo filtré anteriormente, pero lo dejo solo para el caso de la posicion 33, para que se pueda mover a la derecha
+    cmp byte[diff], 1
     sete cl
-    cmp byte[diff], -1          
+    cmp byte[diff], -1
     sete dl 
     or cl, dl
     cmp cl, 0
     je movimientoInvalidoSoldado
     jne movimientoValidoSoldado
-
+;
     ;Chequeo si para todo otro soldado su movimiento es solo hacia abajo en linea recta o diagonal
     verificarParaElRestoDePosicionesSoldado:
     cmp byte[diff], 6
