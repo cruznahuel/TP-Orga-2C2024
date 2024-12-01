@@ -1,30 +1,22 @@
 verificarTableroGuardado:                   ;devuelve el string archivoALeer con el valor "tablero.txt" o "tableroGuardado.txt"
     Strcpy archivoALeer, archivoTablero
 
-    mov rdi, archivoTableroGuardado
-    mov rsi, modoLectura
-    sub rsp, 8
-    call fopen
-    add rsp,8
+    abrirArchivo archivoTableroGuardado, modoLectura
     cmp rax, 0
     jle finVerificarTableroGuardado
 
     mov qword[fileHandle], rax
 
-    mov rdi, qword[fileHandle]
+    mov rdi, inputStr
+    mov rsi, 3
+    mov rdx, qword[fileHandle]
     sub rsp, 8
-    call fgetc
+    call fgets
     add rsp, 8
     cmp rax, 0
-    jl finVerificarTableroGuardado          ;significa que hay archivo pero esta vacio ya que fgetc devuelve -1
-
-    mov rdi, qword[fileHandle]
-    sub rsp, 8
-    call fclose
-    add rsp, 8  
+    jle finVerificarTableroGuardado          ;significa que hay archivo pero esta vacio ya que fgetc devuelve -1
 
     Puts mensajeCargarPartida
-
     pedirCargarPartida:
     Scanf2 formatoChar, inputChar
     cmp rax, 0
@@ -40,7 +32,7 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
     mov al, byte[inputChar]
     mov bl, byte[respuestaNegativa]
     cmp al, bl
-    je finVerificarTableroGuardado
+    je limpiarBuffer
     
     mov al, byte[inputChar]
     mov bl, byte[respuestaPositiva]
@@ -48,26 +40,68 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
     jne inputInvalido
 
     Strcpy archivoALeer, archivoTableroGuardado
-    jmp finVerificarTableroGuardado
+    mov byte[hayPartidaGuardada], 'S'
+    jmp limpiarBuffer
 
     inputInvalido:
     Puts mensajeEleccionCargaIncorrecta
     jmp pedirCargarPartida
 
+    limpiarBuffer:
+    sub rsp, 8
+    call getchar
+    add rsp, 8
+    cmp al, 10
+    jne limpiarBuffer
+
     finVerificarTableroGuardado:
+    cerrarArchivo qword[fileHandle]
+
+    ret
+
+cargarTurnoGuardado:
+    cmp byte[hayPartidaGuardada], 'N'
+    je turnoCargado
+
+    abrirArchivo archivoTurno, modoLectura
+    cmp rax, 0
+    jle errorAberturaArchivoTurno
+    mov qword[fileHandle], rax
+
+    mov rdi, turnoJugadorStr
+    mov rsi, 2
+    mov rdx, qword[fileHandle]
+    sub rsp, 8
+    call fgets
+    add rsp, 8
+
+    mov byte[turnoJugadorStr + 1], 0
+    Sscanf3 turnoJugadorStr, formatoInt, turnoJugador
+    cerrarArchivo qword[fileHandle]
+    jmp turnoCargado
+
+    errorAberturaArchivoTurno:
+    Puts mensajeErrorAperturaGuardado
+    mov rax, 1
+    jmp finCargaTurnoGuardado
+
+    turnoCargado:
+    mov rax, 0
+
+    finCargaTurnoGuardado:
     ret
 
 
 leerTablero:
-    mov rdi, archivoALeer
-    mov rsi, modoLectura
     sub rsp, 8
-    call fopen
+    call cargarTurnoGuardado
     add rsp, 8
+    cmp rax, 1
+    je z
 
+    abrirArchivo archivoALeer, modoLectura
     cmp rax, 0
     jle errorLecturaArchivo
-
     mov qword[fileHandle], rax
 
     mov rdi, tablero
@@ -90,11 +124,9 @@ leerTablero:
     mov rax, 1
 
     finLeerTablero:
-    mov rdi, qword[fileHandle]
-    sub rsp, 8
-    call fclose
-    add rsp, 8
+    cerrarArchivo qword[fileHandle]
 
+    z:
     ret
 
 

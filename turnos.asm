@@ -4,7 +4,7 @@ turnoSoldados:
 
     mov r12b, 'X'
     mov r13, validarPosicionDestinoSoldado
-    mov r14b, 1
+    mov r14b, 2
     sub rsp, 8
     call realizarTurno
     add rsp, 8
@@ -18,7 +18,7 @@ turnoOficiales:
 
     mov r12b, 'O'
     mov r13, validarPosicionDestinoOficial
-    mov r14b, 0
+    mov r14b, 1
     sub rsp, 8
     call realizarTurno
     add rsp, 8

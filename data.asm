@@ -6,16 +6,27 @@ section .data
     tablero                 times 50    db      0                                           ;49 para los caracteres y 1 para el 0 que agrega fgets
     archivoTablero                      db      "tablero.txt",0
     archivoTableroGuardado              db      "tableroGuardado.txt",0
+    archivoTurno                        db      "turno.txt",0
     mensajeErrorLectura                 db      "Hubo un error al leer: %s",10,0
     modoLectura                         db      "r",0
-    mensajeCargarPartida                db      "Hay una partida guardada, ¿quiere reanudarla? S/N",10,0
+    modoEscritura                       db      "w",0
+    mensajeCargarPartida                db      10,"Hay una partida guardada, ¿quiere reanudarla? S/N",0
+    hayPartidaGuardada                  db      'N'  ;por default    
     respuestaPositiva                   db      'S'
     respuestaNegativa                   db      'N'
     mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
-    formatoChar                         db      "%c",0    
+    informacion                         db      10,"Ingrese par fila-columna:",10,"- 0 0 para ver menú de salida.",0
+    mensajeEleccionSalida               db      10,"Ingrese:",10,"- G para guardar la partida.",10,"- X para salir de la partida.",10,0
+    mensajeEleccionSalidaIncorrecta     db      "La elección es incorrecta, ingrese nuevamente.",0
+    mensajeErrorAperturaGuardado        db      "Hubo un error al abrir el archivo de guardado",0
+    mensajeErrorGuardado                db      "Hubo un error al guardar el archivo.",0
+    mensajeGuardadoExitoso              db      "La partida fue guardada con exito!.",0
+    mensajeSalirSinGuardar              db      "Se salió sin guardar.",0
+    formatoChar                         db      "%c",0
+    formatoInt                          db      "%hhi",0
     formatoInputFilCol                  db      "%hhi %hhi",0 ; Transformar los campos a nro entero (me sobra para guardar un nro entre 1 y 7)
     juegoTerminado                      db      'N'
-    turnoJugador                        db      0   ;0 representa Soldados, 1 representa Oficiales
+    turnoJugador                        db      1   ;1 representa Soldados, 2 representa Oficiales
     mensajeDelGanador                   db      "Los ganadores son los %s",10,0
     oficiales                           db      "OFICIALES (O)",0
     soldados                            db      "SOLDADOS (X)",0
@@ -65,6 +76,7 @@ section .data
 section .bss
     fileHandle                          resq    1
     archivoALeer                        resb    30
+    eleccionSalida                      resb    1
     inputStr                            resb    30
     inputChar                           resb    1
     ganador                             resb    10
@@ -96,3 +108,5 @@ section .bss
     
     comentarioJugadaStr                 resb    100
     motivoGanador                       resb    100
+
+    turnoJugadorStr                     resb    2

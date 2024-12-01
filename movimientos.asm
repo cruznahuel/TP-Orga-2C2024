@@ -4,6 +4,14 @@ pedirPosicion:
     cmp rax, 2
     jne pedirPosicion_FormatoIncorrecto
 
+    cmp byte[inputFila], 0
+    sete al
+    cmp byte[inputColumna], 0
+    sete bl
+    and al, bl
+    cmp al, 1
+    je menuSalida
+    
     sub rsp, 8
     call validarFilCol
     add rsp, 8
@@ -84,7 +92,7 @@ calcularDesplazamiento:
 
 realizarMovimiento:
 
-    cmp byte[turnoJugador], 0
+    cmp byte[turnoJugador], 1
     je moverJugador
     
     cmp byte[hayObligacionDeCapturar], 'S'

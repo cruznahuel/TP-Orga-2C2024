@@ -5,6 +5,7 @@ extern puts
 extern printf
 extern scanf
 extern sscanf
+extern sprintf
 
 extern fopen
 extern fclose
@@ -14,6 +15,7 @@ extern fgetc
 extern strcpy
 extern strcmp
 extern toupper
+extern getchar
 
 %macro Puts 1
     mov rdi, %1
@@ -45,6 +47,15 @@ extern toupper
     add rsp, 8
 %endmacro
 
+%macro Sscanf3 3
+    mov rdi, %1
+    mov rsi, %2
+    mov rdx, %3
+    sub rsp, 8
+    call sscanf
+    add rsp, 8
+%endmacro
+
 %macro Sscanf4 4
     mov rdi, %1
     mov rsi, %2
@@ -52,6 +63,15 @@ extern toupper
     mov rcx, %4
     sub rsp, 8
     call sscanf
+    add rsp, 8
+%endmacro
+
+%macro Sprintf3 3
+    mov rdi, %1
+    mov rsi, %2
+    mov rdx, %3
+    sub rsp, 8
+    call sprintf
     add rsp, 8
 %endmacro
 
@@ -69,6 +89,22 @@ extern toupper
     call system
     add rsp, 8
 %endmacro
+
+%macro abrirArchivo 2
+    mov rdi, %1
+    mov rsi, %2
+    sub rsp, 8
+    call fopen
+    add rsp, 8
+%endmacro
+
+%macro cerrarArchivo 1
+    mov rdi, %1
+    sub rsp, 8
+    call fclose
+    add rsp, 8
+%endmacro
+
 ;%macro callAndAdjustStack 1
 ;    sub rsp, 8
 ;    call %1
