@@ -57,10 +57,11 @@ section .data
     columnaOficial1                     dw      0
     filaOficial2                        dw      0
     columnaOficial2                     dw      0
-    datosOficial1                       times 13 db 0; 11 para datos y 2 adicionales
-    datosOficial2                       times 13 db 0 
+    datosOficial1                       times 26 db 0; 22 para datos(pueden ser de 1 o 2 caracteres cada uno) y 4 adicionales
+    datosOficial2                       times 26 db 0 
     buffer                              times 50 db 0
-    indice                               db      0      
+    indice                              db      0   
+    datosOficialActual                  dw      0   
 
 section .bss
     fileHandle                          resq    1

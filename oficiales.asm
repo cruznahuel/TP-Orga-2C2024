@@ -25,12 +25,13 @@ cargarPosicionOficial:
     cargarPosicionOficial1:
         movzx r14, byte[filaOficial1]
         movzx r15, byte[columnaOficial1]
+        Strcpy datosOficialActual,datosOficial1
         ret
     cargarPosicionOficial2:
-        movzx r14, byte[filaOficial1]
-        movzx r15, byte[columnaOficial1]
+        movzx r14, byte[filaOficial2]
+        movzx r15, byte[columnaOficial2]
+        Strcpy datosOficialActual,datosOficial2
         ret
-
 
 leerArchivoOficiales:
     mov rdi, archivoOficialesALeer
@@ -132,23 +133,27 @@ obtenerValorOficialSegunIndice:
     mov r15,0                  
     mov r13,0  
     mov r14,0
-    xor rax,rax ; doy valor 0 al acumulador                 
-    jmp recorrarHastaElIndice   
-    recorrarHastaElIndice:     
+    xor rax,rax ; doy valor 0 al acumulador  
+    cmp r12b,0
+    je procesarNumero   
+
+    jmp recorrerHastaElIndice   
+    recorrerHastaElIndice: 
+
         mov bl, [buffer+r13]          
         cmp bl, ' '             
         je esNuevoNumero       
         cmp bl,0
         je fin
         inc r13
-        jmp recorrarHastaElIndice
+        jmp recorrerHastaElIndice
 
     esNuevoNumero:
         inc r13
         inc r14
         cmp r14, r12 ;comparo en indice actual con el pasado por parametro
         je procesarNumero
-        jne recorrarHastaElIndice
+        jne recorrerHastaElIndice
 
     procesarNumero:
         mov bl, [buffer+r13]
@@ -172,15 +177,15 @@ obtenerValorOficialSegunIndice:
             jmp procesarNumero
     fin:
         ret
-
 registrarDesplazamiento:
     callAndAdjustStack cargarPosicionOficial
 
     sub r14w, [filaDestino]
     sub r15w, [columnaDestino]
-    callAndAdjustStack obtener_index
+    callAndAdjustStack obtenerIndice
+    callAndAdjustStack ajustarStringOficial
     ret
-obtener_index:
+obtenerIndice:
     mov byte[indice],0
     cmp r14b,0
     jl .sur                    ; Fila aumenta
@@ -197,7 +202,7 @@ obtener_index:
     cmp r15b, 0
     jl .noreste
     jg .noroeste
-    mov byte [indice], 1        ; Norte
+    mov byte [indice], 1        ; Norte 
     ret
 
 
@@ -231,3 +236,110 @@ obtener_index:
 .sudoeste:
     mov byte [indice], 5        ; Sudoeste
     ret 
+
+ajustarStringOficial:
+    Strcpy buffer,datosOficialActual
+    mov r10,0 ;desplazamiento del string a modificar         
+    mov r13,0 ;desplazamiento del string 
+    mov r14,0 ;indice actual
+    mov r15,0 ;0 para indicar que es primer digito 
+    
+    xor rax,rax ; doy valor 0 al acumulador     
+    jmp copiarHastaElIndice  
+
+    cmp byte[indice],0
+    je registrarCambio
+
+    copiarHastaElIndice: 
+        
+        cmp r14b, 9 ;comparo en indice actual con el pasado por parametro
+        je registrarFilaColumna
+
+        mov bl, [buffer+r13]  
+        cmp bl, ' '             
+        je nuevoNumero       
+        cmp bl,0
+        je finCopiar
+
+        mov byte[datosOficialActual+r10],bl ;ver si asi esta bien, capaz haya que poner que es de tamaño byte.
+
+        inc r13
+        inc r10
+        jmp copiarHastaElIndice
+
+        nuevoNumero:
+            mov byte[datosOficialActual+r10],bl ;ver si asi esta bien, capaz haya que poner que es de tamaño byte.
+            inc r13
+            inc r10
+            inc r14
+            cmp r14b,[indice]
+            je  registrarCambio
+            jne copiarHastaElIndice
+
+    registrarCambio:
+        mov bl, [buffer+r13]
+
+        cmp bl, ' '
+        je finRegistrarCambio
+        cmp bl,0
+        je finRegistrarCambio
+
+        sub bl, '0' ; Convertir el dígito a número
+
+        cmp r15, 0
+        je sumarNumeroActual ; Si es el primer dígito, no multiplicar por 10
+        mov cl, 10
+        mul cl ; Multiplicar el acumulador por 10
+
+        sumarNumeroActual:
+            add ax, bx ; Sumar el dígito
+            mov r15, 1 ; Marcar que ya no es el primer dígito
+            inc r13
+            jmp registrarCambio
+
+        finRegistrarCambio:
+            inc ax
+            cmp r15, 1
+            je convertirACaracter; si solo hay un caracter lo convierto, en caso contrario divido por 10 y convierto cada uno
+            mov cl, 10
+            div cl ; dividir el acumulador por 10
+            mov bl,ah
+            add bl,'0'
+            mov byte[datosOficialActual+r10],bl;datosOficialActual contiene la direccion del string, r10 es el desplazamiento    VERI SI FUNCIONA ASI, CAPAZ HAY QUE PONER BYTE O ALGO
+            inc r10
+
+        convertirACaracter:
+            mov bl,al
+            add bl,'0'
+            mov byte[datosOficialActual+r10],bl
+            inc r10
+            mov byte[datosOficialActual+r10],' ' ;ver si asi esta bien, capaz haya que poner que es de tamaño byte.
+            jmp copiarHastaElIndice
+
+    registrarFilaColumna:
+        mov bl,[filaDestino]
+        add bl, '0'
+        mov byte[datosOficialActual+r10],bl
+
+        inc r10
+        mov byte[datosOficialActual+r10],' '
+
+        inc r10
+        mov bl,[columnaDestino]
+        add bl, '0'
+        mov byte[datosOficialActual+r10],bl
+        inc r10
+    
+    finCopiar:
+        mov byte[datosOficialActual+r10],0
+        cmp byte[oficialSeleccionado],1
+        je copiarOficial1
+        jne copiarOficial2
+        
+        copiarOficial1:
+            Strcpy datosOficial1,datosOficialActual
+            ret
+        copiarOficial2:
+            Strcpy datosOficial2,datosOficialActual
+            ret
+   
