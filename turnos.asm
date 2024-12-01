@@ -36,6 +36,9 @@ realizarTurno:
     call pedirPosicionDestino
     add rsp, 8
 
+    cmp byte[pedirInputOrigenDeNuevo], 'S'
+    je realizarTurno
+
     mov byte[caracter], r12b
     sub rsp, 8
     call realizarMovimiento

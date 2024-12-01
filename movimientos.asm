@@ -11,6 +11,14 @@ pedirPosicion:
     and al, bl
     cmp al, 1
     je menuSalida
+
+    cmp byte[inputFila], 1
+    sete al
+    cmp byte[inputColumna], 1
+    sete bl
+    and al, bl
+    cmp al, 1
+    je pedirOrigenDeNuevo
     
     sub rsp, 8
     call validarFilCol
@@ -25,15 +33,22 @@ pedirPosicion:
     Puts mensajeFormatoIncorrecto
     jmp pedirPosicion
 
+    pedirOrigenDeNuevo:
+    mov byte[pedirInputOrigenDeNuevo], 'S'
+
     pedirPosicionFin:
     ret
 
 pedirPosicionOrigen:
+    mov byte[pedirInputOrigenDeNuevo], 'N'
     Puts mensajeIngFilColOrigen
     pedirPosOrigen:
     sub rsp, 8
     call pedirPosicion
     add rsp, 8
+
+    cmp byte[pedirInputOrigenDeNuevo], 'S'
+    je pedirPosicionOrigen
 
     sub rsp, 8
     call validarLugar
@@ -60,11 +75,20 @@ pedirPosicionOrigen:
     ret
 
 pedirPosicionDestino:
+    mov byte[pedirInputOrigenDeNuevo], 'N'
     Puts mensajeIngFilColDestino
     pedirPosDestino:
     sub rsp, 8
     call pedirPosicion
     add rsp, 8
+
+    cmp byte[inputFila], 1
+    sete al
+    cmp byte[inputColumna], 1
+    sete bl
+    and al, bl
+    cmp al, 1
+    je pedirPosOrigenDeNuevo
 
     sub rsp, 8
     call qword[direccionFuncion]
@@ -75,12 +99,17 @@ pedirPosicionDestino:
     Puts mensajeErrorMovimiento
     jmp pedirPosDestino
 
+    pedirPosOrigenDeNuevo:
+    mov byte[pedirInputOrigenDeNuevo], 'S'
+    jmp f
+
     finPedirPosicionDestino:
     mov al, byte[inputFila]
     mov byte[filaDestino], al
     mov al, byte[inputColumna]
     mov byte[columnaDestino], al
 
+    f:
     ret
 
 

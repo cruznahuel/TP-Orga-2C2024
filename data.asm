@@ -15,7 +15,7 @@ section .data
     respuestaPositiva                   db      'S'
     respuestaNegativa                   db      'N'
     mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
-    informacion                         db      10,"Ingrese par fila-columna:",10,"- 0 0 para ver menú de salida.",0
+    informacion                         db      10,"Ingrese par fila-columna:",10,"- 0 0 para ver menú de salida.",10,"- 1 1 para cambiar la posicion origen seleccionada.",0
     mensajeEleccionSalida               db      10,"Ingrese:",10,"- G para guardar la partida.",10,"- X para salir de la partida.",10,0
     mensajeEleccionSalidaIncorrecta     db      "La elección es incorrecta, ingrese nuevamente.",0
     mensajeErrorAperturaGuardado        db      "Hubo un error al abrir el archivo de guardado",0
@@ -46,8 +46,8 @@ section .data
     nuevaLinea                          db      "",0
 
     ;Seccion movimientos
-    mensajeIngFilColOrigen              db      "-->Ingrese fila (0 a 6) y columna (0 a 6) del que desea mover, separados por un espacio: ", 0
-    mensajeIngFilColDestino             db      "-->Ingrese fila (0 a 6) y columna (0 a 6) a la que se desea mover separados por un espacio: ", 0
+    mensajeIngFilColOrigen              db      "-->Ingrese fila (0 a 6) y columna (0 a 6) ORIGEN, separados por un espacio: ", 0
+    mensajeIngFilColDestino             db      "-->Ingrese fila (0 a 6) y columna (0 a 6) DESTINO, separados por un espacio: ", 0
     mensajeFormatoIncorrecto            db      "El formato es incorrecto, ingrese nuevamente.",0
     mensajeFilColFueraTablero           db      "La posicion es inválida, ingrese nuevamente.",0
     mensajeNoHayJugador                 db      "En la posicion elegida no hay un %s, ingrese nuevamente.",10,0
@@ -94,6 +94,7 @@ section .bss
     posicionDestino                     resb    1
     posicionOrigen                      resb    1
     diff                                resb    1
+    pedirInputOrigenDeNuevo             resb    1   ; S o N
     
     haySoldadoCerca                     resb    1   ; S o N
     sePuedeCapturar                     resb    1   ; S o N
