@@ -14,10 +14,19 @@ section .data
     mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
     formatoChar                         db      "%c",0    
     formatoInputFilCol                  db      "%hi %hi", 0 ; Transformar los campos a nro entero (me sobra para guardar un nro entre 1 y 7)
-    formatoOficiales                    db      "%hi %hi %hi %hi %hi %hi %hi %hi %hi %hi %hi", 0
-    mensajeInformacionOficial           db      "noroeste:%hi,norte:%hi,noreste:%hi,oeste:%hi,este:%hi,sudeste:%hi,sur:%hi,sudeste:%hi,capturas:%hi,filaActual:%hi,columnaActual:%hi",10,0
-    mensajeOficial1                     db      "oficial1:",10,0
-    mensajeOficial2                     db      "oficial2:",10,0
+
+    ;para la impresion de  datos de oficiales
+    mensajeNoroeste                     db      "noroeste:%hd,",0
+    mensajeNorte                        db      "norte:%hd,",0
+    mensajeNoreste                      db      "noreste:%hd,",0
+    mensajeOeste                        db      "oeste:%hd,",0
+    mensajeEste                         db      "este:%hd,",0
+    mensajeSudoeste                     db      "sudoeste:%hd,",0
+    mensajeSur                          db      "sur:%hd,",0
+    mensajeSudeste                      db      "sudeste:%hd,",0
+    mensajeCapturas                     db      "capturas:%hd",10,0
+    mensajeOficial1                     db      "oficial1:",0
+    mensajeOficial2                     db      "oficial2:",0
 
     ;Para la impresion del tablero
     e                                   db      "   ",0

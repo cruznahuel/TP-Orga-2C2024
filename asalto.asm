@@ -151,11 +151,21 @@ movimientoOficialValido:
 
     callAndAdjustStack imprimirTablero
 
+    jmp finPrograma
     callAndAdjustStack siguienteTurno
 
     ret
 
 finPrograma:
+    ;asi se deberia llamar para mostrar la informacion de los oficiales
+    Puts mensajeOficial1
+    Strcpy datosOficialActual,datosOficial1
+    callAndAdjustStack imprimirDatosOficiales
+
+    Puts mensajeOficial2
+    Strcpy datosOficialActual, datosOficial2
+    callAndAdjustStack imprimirDatosOficiales
+
     ret
 
 

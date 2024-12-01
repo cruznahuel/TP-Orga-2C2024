@@ -342,4 +342,72 @@ ajustarStringOficial:
         copiarOficial2:
             Strcpy datosOficial2,datosOficialActual
             ret
-   
+
+imprimirDatosOficiales:
+
+    xor rsi,rsi ;dejo el valor de rsi en 0
+
+    mov r12, 0
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeNoroeste
+    callAndAdjustStack printf
+
+    mov r12, 1
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeNorte
+    callAndAdjustStack printf
+
+    mov r12, 2
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeNoreste
+    callAndAdjustStack printf
+
+    mov r12, 3
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeOeste
+    callAndAdjustStack printf
+
+    mov r12, 4
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeEste
+    callAndAdjustStack printf
+
+    mov r12, 5
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeSudeste
+    callAndAdjustStack printf
+
+    mov r12, 6
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeSur
+    callAndAdjustStack printf
+
+    mov r12, 7
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeSudeste
+    callAndAdjustStack printf
+
+    mov r12, 8
+    Strcpy buffer, datosOficialActual
+    callAndAdjustStack obtenerValorOficialSegunIndice
+    mov si, ax
+    mov rdi, mensajeCapturas
+    callAndAdjustStack printf
+
+    ret
