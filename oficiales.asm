@@ -448,38 +448,3 @@ imprimirDatosOficiales:
     callAndAdjustStack printf
 
     ret
-
-
-actualizarArchivoOficiales:
-    mov rdi, archivoOficialesGuardado
-    mov rsi, modoEscritura
-
-    callAndAdjustStack fopen
-    cmp rax,0
-    je errorLecturaArchivoOficialesGuardao
-
-    mov qword[fileHandleOficiales], rax
-
-    Strcpy buffer,datosOficial1
-    callAndAdjustStack añadir_salto
-
-    mov rdi,buffer
-    mov rsi, [fileHandleOficiales]
-    callAndAdjustStack fputs
-
-    mov rdi,datosOficial2
-    mov rsi, [fileHandleOficiales]
-    callAndAdjustStack fputs
-
-    jmp finEscribirOficiales
-
-    errorLecturaArchivoOficialesGuardao:
-        mov rdi, mensajeErrorLectura
-        mov rsi, archivoOficialesGuardado
-        callAndAdjustStack printf
-        mov rax,1
-    
-    finEscribirOficiales:
-        mov rdi, qword[fileHandleOficiales]
-        callAndAdjustStack fclose
-        ret
