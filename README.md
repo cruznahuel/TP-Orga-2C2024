@@ -6,8 +6,7 @@ Se debe instalar la versión 2.16.01 de NASM.
 
 Actualización de los repositorios de la distribución y actualización de la distribución.
 ```sh
-sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get update && sudo apt-get upgrade
 ```
 
 Debido a que la version 2.16.1 no se encuentra en el repositorio de paquetes de ubuntu 22.04, se debe instalar su archivo rpm.
