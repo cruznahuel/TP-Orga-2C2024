@@ -401,7 +401,6 @@ validarPosicionDestinoOficial:
     mov cl, byte[posicionOrigen]
     add cl, al
     mov byte[posicionSoldadoCapturado], cl
-    
     jmp movimientoValidoOficial
 
     ;--------------------------------------------------

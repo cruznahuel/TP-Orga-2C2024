@@ -39,7 +39,7 @@ section .data
     cantidadSoldados                    db      24
     posicionesFortaleza                 db      30,31,32,37,38,39,44,45,46
     posicionOficial1                    db      44      ; es dinamico, arranca con este valor
-    posicionOficial2                    db      39      ; es dinamico, arranca con este valor   ESTO TENDRIA QUE CAMBIARLO POR LOS DATOS QUE TENGO YO
+    posicionOficial2                    db      39      ; es dinamico, arranca con este valor 
 
     ;para la impresion de  datos de oficiales
     mensajeNoroeste                     db      "noroeste:%hd,",0
