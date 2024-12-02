@@ -16,7 +16,7 @@ section .data
     hayPartidaGuardada                  db      'N'  ;por default    
     respuestaPositiva                   db      'S'
     respuestaNegativa                   db      'N'
-    mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",10,0
+    mensajeEleccionCargaIncorrecta      db      "Respuesta inválida, debe ser S o N",0
     informacion                         db      10,"Ingrese par fila-columna:",10,"- 0 0 para ver menú de salida.",10,"- 1 1 para cambiar la posicion origen seleccionada.",0
     mensajeEleccionSalida               db      10,"Ingrese:",10,"- G para guardar la partida.",10,"- X para salir de la partida.",10,0
     mensajeEleccionSalidaIncorrecta     db      "La elección es incorrecta, ingrese nuevamente.",0

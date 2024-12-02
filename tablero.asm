@@ -31,14 +31,10 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
     add rsp, 8
     mov byte[inputChar], al
     
-    mov al, byte[inputChar]
-    mov bl, byte[respuestaNegativa]
-    cmp al, bl
+    cmp byte[inputChar], 'N'
     je limpiarBuffer
     
-    mov al, byte[inputChar]
-    mov bl, byte[respuestaPositiva]
-    cmp al, bl
+    cmp byte[inputChar], 'S'
     jne inputInvalido
 
     Strcpy archivoALeer, archivoTableroGuardado
@@ -48,17 +44,27 @@ verificarTableroGuardado:                   ;devuelve el string archivoALeer con
 
     inputInvalido:
     Puts mensajeEleccionCargaIncorrecta
+    sub rsp, 8
+    call limpiarBufferResidual
+    add rsp, 8
     jmp pedirCargarPartida
 
     limpiarBuffer:
     sub rsp, 8
-    call getchar
+    call limpiarBufferResidual
     add rsp, 8
-    cmp al, 10
-    jne limpiarBuffer
 
     finVerificarTableroGuardado:
     cerrarArchivo qword[fileHandle]
+
+    ret
+
+limpiarBufferResidual:
+    sub rsp, 8
+    call getchar
+    add rsp, 8
+    cmp al, 10
+    jne limpiarBufferResidual
 
     ret
 
