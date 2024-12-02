@@ -1,6 +1,6 @@
 # El Asalto
 
-Trabajo en contexto de TP-Orga-2C2024.
+Trabajo en contexto de TP-Organización del Computador-2C2024-FIUBA.
 
 Se debe instalar la versión 2.16.01 de NASM.
 
@@ -9,7 +9,7 @@ Actualización de los repositorios de la distribución y actualización de la di
 sudo apt-get update && sudo apt-get upgrade
 ```
 
-Debido a que la version 2.16.1 no se encuentra en el repositorio de paquetes de ubuntu 22.04, se debe instalar su archivo rpm.
+Debido a que la version 2.16.01 no se encuentra en el repositorio de paquetes de ubuntu 22.04, se debe instalar su archivo rpm.
 Para instalar un gestor de paquetes rpm.
 ```sh
 sudo apt install alien
