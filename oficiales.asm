@@ -423,7 +423,7 @@ imprimirDatosOficiales:
     Strcpy buffer, datosOficialActual
     callAndAdjustStack obtenerValorOficialSegunIndice
     mov si, ax
-    mov rdi, mensajeSudeste
+    mov rdi, mensajeSudoeste
     callAndAdjustStack printf
 
     mov r12, 6
