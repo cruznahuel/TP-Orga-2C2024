@@ -15,7 +15,7 @@ turnoSoldados:
 turnoOficiales:
     Strcpy nombreJugador, strOficial
     Printf2 mensajeTurno, oficiales
-
+    mov byte[oficialCaptura],'N'
     mov r12b, 'O'
     mov r13, validarPosicionDestinoOficial
     mov r14b, 1
@@ -24,6 +24,15 @@ turnoOficiales:
     add rsp, 8
     callAndAdjustStack determinarOficial
     callAndAdjustStack registrarDesplazamiento
+    cmp byte[oficialCaptura],'S'
+    jne terminarTurno
+
+    sub r14w, [filaDestino]
+    sub r15w, [columnaDestino]
+    mov byte[indice],8
+    callAndAdjustStack ajustarStringOficial
+
+    terminarTurno:
     ret
 
 realizarTurno:
